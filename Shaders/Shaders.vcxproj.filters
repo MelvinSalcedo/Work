@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Fragment">
+      <UniqueIdentifier>{a1ff472d-c63e-4227-9640-c3f1c194599c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="src\Vertex\vHeightmap.hlsl" />
+    <FxCompile Include="src\Vertex\vDefault.hlsl" />
+    <FxCompile Include="src\Geometry\gDefault.hlsl" />
+    <FxCompile Include="src\Vertex\vWave.hlsl" />
+    <FxCompile Include="src\Vertex\vWaveCircular.hlsl" />
+    <FxCompile Include="include\Projector.hlsl" />
+    <FxCompile Include="src\Fragment\pAverageGrayScale.hlsl" />
+    <FxCompile Include="src\Fragment\pVBlur.hlsl" />
+    <FxCompile Include="src\Fragment\pTilemapping.hlsl" />
+    <FxCompile Include="src\Fragment\pSobel.hlsl" />
+    <FxCompile Include="src\Fragment\pProjector.hlsl" />
+    <FxCompile Include="src\Fragment\pMergeTexture.hlsl" />
+    <FxCompile Include="src\Fragment\pLuminosityGrayScale.hlsl" />
+    <FxCompile Include="src\Fragment\pLightnessGrayScale.hlsl" />
+    <FxCompile Include="src\Fragment\pHBlur.hlsl" />
+    <FxCompile Include="src\Fragment\pGlow.hlsl" />
+    <FxCompile Include="src\Fragment\pDiffuse.hlsl" />
+    <FxCompile Include="src\Fragment\pSpecular.hlsl" />
+    <FxCompile Include="src\Fragment\pUnlit.hlsl" />
+    <FxCompile Include="src\Fragment\pShowAlphaValue.hlsl" />
+    <FxCompile Include="src\Fragment\pShadowMapping.hlsl" />
+    <FxCompile Include="src\Fragment\pDiffuseBumpMapping.hlsl" />
+    <FxCompile Include="src\Fragment\pSpecularBumpMapping.hlsl" />
+    <FxCompile Include="src\Vertex\vGerstnerWave.hlsl" />
+    <FxCompile Include="src\Fragment\pTextureWithoutAlpha.hlsl" />
+    <FxCompile Include="include\TextureConstantBuffer.hlsl" />
+    <FxCompile Include="src\Geometry\gDefaultLine.hlsl" />
+    <FxCompile Include="src\Fragment\pLSystem.hlsl" />
+    <FxCompile Include="src\Fragment\pText.hlsl" />
+    <FxCompile Include="src\Geometry\gBillboarding.hlsl" />
+    <FxCompile Include="src\Vertex\vBillboarding.hlsl" />
+    <FxCompile Include="src\Fragment\pTextureWave.hlsl" />
+    <FxCompile Include="src\Vertex\pVertexTextureWave.hlsl" />
+  </ItemGroup>
+</Project>
