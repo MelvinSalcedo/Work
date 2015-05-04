@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6734642E-50EB-49A5-88B7-443F76FD133C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Troll3D</RootNamespace>
+    <AssemblyName>Troll3D</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <NuGetPackageImportStamp>45ecea92</NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="SharpDX, Version=2.6.3.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11, Version=2.6.3.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D11.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DXGI, Version=2.6.3.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.DXGI.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Toolkit">
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ApplicationDX11.cs" />
+    <Compile Include="ApplicationInformation.cs" />
+    <Compile Include="BitmapImage.cs" />
+    <Compile Include="Collisions\BoundingForms\AABB.cs" />
+    <Compile Include="Collisions\BoundingForms\BoundingForm.cs" />
+    <Compile Include="Collisions\BoundingForms\BoundingSphere.cs" />
+    <Compile Include="Collisions\BoundingForms\OBB.cs" />
+    <Compile Include="Collisions\CollisionEvent.cs" />
+    <Compile Include="Collisions\Plane.cs" />
+    <Compile Include="Collisions\Ray.cs" />
+    <Compile Include="Collisions\RaycastResult.cs" />
+    <Compile Include="Collisions\SAT\Arrete.cs" />
+    <Compile Include="Collisions\SAT\SAT.cs" />
+    <Compile Include="Collisions\SAT\Shape.cs" />
+    <Compile Include="Collisions\TRaycast.cs" />
+    <Compile Include="CommonBehaviors\FreeView.cs" />
+    <Compile Include="CommonBehaviors\SceneView.cs" />
+    <Compile Include="CommonBehaviors\Trackview.cs" />
+    <Compile Include="Commons\Rect.cs" />
+    <Compile Include="Components\Behaviour.cs" />
+    <Compile Include="Components\Billboard.cs" />
+    <Compile Include="Components\GUI\TLabel.cs" />
+    <Compile Include="Components\GUI\TSlider.cs" />
+    <Compile Include="Components\GUI\TWidget.cs" />
+    <Compile Include="Components\GUI\TWindow.cs" />
+    <Compile Include="Components\IRenderable.cs" />
+    <Compile Include="Components\Lighting\DirectionalLight.cs" />
+    <Compile Include="Components\Lighting\Light.cs" />
+    <Compile Include="Components\Lighting\PointLight.cs" />
+    <Compile Include="Components\Lighting\SpotLight.cs" />
+    <Compile Include="Components\MeshRenderer.cs" />
+    <Compile Include="Components\Projections\FrustumProjection.cs" />
+    <Compile Include="Components\Projections\OrthoProjection.cs" />
+    <Compile Include="Components\Projections\Projection.cs" />
+    <Compile Include="Components\TComponent.cs" />
+    <Compile Include="Components\Text\FontQuad.cs" />
+    <Compile Include="Components\Text\TButton.cs" />
+    <Compile Include="Components\Text\TextQuad.cs" />
+    <Compile Include="Components\Tilemap.cs" />
+    <Compile Include="Components\TileMaping\AtlasNode.cs" />
+    <Compile Include="Components\TileMaping\FontAtlas.cs" />
+    <Compile Include="Components\TileMaping\TextureAtlas.cs" />
+    <Compile Include="Components\TileMaping\Tile.cs" />
+    <Compile Include="Components\TileMaping\TilemapDesc.cs" />
+    <Compile Include="Components\TileMaping\Tileset.cs" />
+    <Compile Include="Components\Transform.cs" />
+    <Compile Include="Components\Views\Camera.cs" />
+    <Compile Include="Components\Views\Projector.cs" />
+    <Compile Include="Components\Views\View.cs" />
+    <Compile Include="DirectX11Window.cs" />
+    <Compile Include="DirectXHelper\AbstractCBuffer.cs" />
+    <Compile Include="DirectXHelper\CBuffer.cs" />
+    <Compile Include="DirectXHelper\Screen.cs" />
+    <Compile Include="DirectXHelper\SwapChain.cs" />
+    <Compile Include="DirectXHelper\TimeHelper.cs" />
+    <Compile Include="DirectXHelper\Viewport.cs" />
+    <Compile Include="Entity.cs" />
+    <Compile Include="manager\CollisionManager.cs" />
+    <Compile Include="manager\InputManager\InputEvent.cs" />
+    <Compile Include="manager\InputManager\InputManager.cs" />
+    <Compile Include="manager\InputManager\KeyboardEvent.cs" />
+    <Compile Include="manager\InputManager\MouseEvent.cs" />
+    <Compile Include="manager\InputManager\MouseInformation.cs" />
+    <Compile Include="manager\LayerManager.cs" />
+    <Compile Include="manager\LightManager.cs" />
+    <Compile Include="manager\MeshManager.cs" />
+    <Compile Include="manager\PrimitiveRenderer.cs" />
+    <Compile Include="manager\ProjectorManager.cs" />
+    <Compile Include="manager\RenderingManager.cs" />
+    <Compile Include="manager\ResourceManager.cs" />
+    <Compile Include="manager\StencilManager.cs" />
+    <Compile Include="Maths\Curves\BaseCurve.cs" />
+    <Compile Include="Maths\Curves\BezierCurve.cs" />
+    <Compile Include="Maths\Curves\BSplineCurve.cs" />
+    <Compile Include="Maths\Curves\HermiteCurve.cs" />
+    <Compile Include="Maths\Heightmap.cs" />
+    <Compile Include="Maths\LineGeometry.cs" />
+    <Compile Include="Maths\Math.cs" />
+    <Compile Include="Maths\MathStuffs.cs" />
+    <Compile Include="Maths\PerlinNoise.cs" />
+    <Compile Include="Maths\Plane.cs" />
+    <Compile Include="Maths\Wave.cs" />
+    <Compile Include="Meshes\DirectXMesh.cs" />
+    <Compile Include="Meshes\Face.cs" />
+    <Compile Include="Meshes\Line.cs" />
+    <Compile Include="Meshes\LineMesh.cs" />
+    <Compile Include="Meshes\Mesh.cs" />
+    <Compile Include="Meshes\PointMesh.cs" />
+    <Compile Include="Meshes\StandardMesh.cs" />
+    <Compile Include="Meshes\Vertex\AbstractVertex.cs" />
+    <Compile Include="Meshes\Vertex\ColoredVertex.cs" />
+    <Compile Include="Meshes\Vertex\StandardVertex.cs" />
+    <Compile Include="PostProcessing\GlowEffect.cs" />
+    <Compile Include="PostProcessing\GlowingManager.cs" />
+    <Compile Include="PostProcessing\ImageProcessing.cs" />
+    <Compile Include="Primitives\Circle.cs" />
+    <Compile Include="Primitives\Cone.cs" />
+    <Compile Include="Primitives\Cube.cs" />
+    <Compile Include="Primitives\Cylinder.cs" />
+    <Compile Include="Primitives\Grid.cs" />
+    <Compile Include="Primitives\HashedLine.cs" />
+    <Compile Include="Primitives\Line.cs" />
+    <Compile Include="Primitives\LineAnimated.cs" />
+    <Compile Include="Primitives\LineRect.cs" />
+    <Compile Include="Primitives\Point.cs" />
+    <Compile Include="Primitives\Primitive.cs" />
+    <Compile Include="Primitives\ProjectionMesh.cs" />
+    <Compile Include="Primitives\Quad.cs" />
+    <Compile Include="Primitives\Sphere.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Quadtree\QuadNode.cs" />
+    <Compile Include="Quadtree\Quadtree.cs" />
+    <Compile Include="Rendering\DepthStencil.cs" />
+    <Compile Include="Rendering\DirectX11\DirectX11Renderer.cs" />
+    <Compile Include="Rendering\DirectX11\DirectX11RenderingFactory.cs" />
+    <Compile Include="Rendering\DirectX11\DirectX11RenderTarget.cs" />
+    <Compile Include="Rendering\DirectX11\StencilViewDirectX11.cs" />
+    <Compile Include="Rendering\DirectX11\ViewportDirectX11.cs" />
+    <Compile Include="Rendering\Effects\Effect.cs" />
+    <Compile Include="Rendering\Effects\MaterialDX11.cs" />
+    <Compile Include="Rendering\Effects\Pass.cs" />
+    <Compile Include="Rendering\Effects\Technique.cs" />
+    <Compile Include="Rendering\Renderer.cs" />
+    <Compile Include="Rendering\RenderingFactory.cs" />
+    <Compile Include="Rendering\RenderTarget.cs" />
+    <Compile Include="Rendering\Viewport.cs" />
+    <Compile Include="RenderSystems\RenderOperation.cs" />
+    <Compile Include="RenderSystems\RenderSystem.cs" />
+    <Compile Include="RenderTexture.cs" />
+    <Compile Include="Root.cs" />
+    <Compile Include="Scene.cs" />
+    <Compile Include="SceneGrid.cs" />
+    <Compile Include="ShaderDesc\BillboardDesc.cs" />
+    <Compile Include="ShaderDesc\GlowDesc.cs" />
+    <Compile Include="ShaderDesc\HBlurDesc.cs" />
+    <Compile Include="ShaderDesc\LightDesc.cs" />
+    <Compile Include="ShaderDesc\LightsDesc.cs" />
+    <Compile Include="ShaderDesc\MaterialDesc.cs" />
+    <Compile Include="ShaderDesc\ProjectorDesc.cs" />
+    <Compile Include="ShaderDesc\ProjectorsDesc.cs" />
+    <Compile Include="ShaderDesc\TextureConstantBufferDesc.cs" />
+    <Compile Include="ShaderDesc\VBlurDesc.cs" />
+    <Compile Include="ShaderDesc\WorldViewProj.cs" />
+    <Compile Include="TImage.cs" />
+    <Compile Include="Window.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+    <Error Condition="!Exists('..\packages\SharpDX.2.6.3\build\SharpDX.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpDX.2.6.3\build\SharpDX.targets'))" />
+    <Error Condition="!Exists('..\packages\SharpDX.Toolkit.2.6.3\build\SharpDX.Toolkit.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpDX.Toolkit.2.6.3\build\SharpDX.Toolkit.targets'))" />
+  </Target>
+  <Import Project="..\packages\SharpDX.2.6.3\build\SharpDX.targets" Condition="Exists('..\packages\SharpDX.2.6.3\build\SharpDX.targets')" />
+  <Import Project="..\packages\SharpDX.Toolkit.2.6.3\build\SharpDX.Toolkit.targets" Condition="Exists('..\packages\SharpDX.Toolkit.2.6.3\build\SharpDX.Toolkit.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
