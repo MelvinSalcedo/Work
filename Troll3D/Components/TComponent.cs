@@ -13,7 +13,8 @@ namespace Troll3D.Components
         Behavior,
         Light,
         Camera,
-        TileMap
+        TileMap,
+        Collider
     }
 
     public abstract class TComponent

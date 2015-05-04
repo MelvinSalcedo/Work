@@ -24,7 +24,6 @@ namespace Troll3D.Common
             LoadFile( path );
         }
 
-
         public void InitializeFromString( string content )
         {
             LoadStrings( content );
@@ -86,13 +85,7 @@ namespace Troll3D.Common
             }
         }
 
-        // Accessors
-
         public int RowCount { get { return m_Rows.Count; } }
-
-        // Private
-
-        // Methods
 
         private void LoadStrings( string content )
         {
@@ -190,8 +183,6 @@ namespace Troll3D.Common
             }
         }
 
-        // Properties
-
         private List<CSVRow> m_Rows;
         private string[] m_Headers;          // Représente les headers du fichier CSV
 
@@ -200,18 +191,11 @@ namespace Troll3D.Common
 
     public class CSVRow
     {
-
-        // Public 
-
-        // Constructors
-
         public CSVRow( CSVFile file )
         {
             m_Cells = new List<string>();
             m_File = file;
         }
-
-        // Methods
 
         public void AddCell( string str )
         {
@@ -239,10 +223,6 @@ namespace Troll3D.Common
             }
             throw ( new Exception( " Can't find Cell" ) );
         }
-
-        // Private 
-
-        // Properties
 
         private CSVFile m_File;
         private List<string> m_Cells;

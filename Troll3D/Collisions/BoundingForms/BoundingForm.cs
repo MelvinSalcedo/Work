@@ -12,21 +12,15 @@ namespace Troll3D{
     // Classe de base pour les différentes boites englobantes servant aux collisions
     public abstract class BoundingForm : Entity{
 
-        // Public
+        public BoundingForm(Entity entity) : base(entity) {
+            Color_ = new Vector4(0.0f, 1.0f, 0.0f, 1.0f);
+            CollisionManager.Instance.boundingforms_.Add(this);
+            active_ = true;
+        }
 
-            // Lifecycle
-
-                public BoundingForm(Entity entity) : base(entity) {
-                    Color_ = new Vector4(0.0f, 1.0f, 0.0f, 1.0f);
-                    CollisionManager.Instance.boundingforms_.Add(this);
-                    active_ = true;
-                }
-
-            // Methods
-
-                //public abstract bool Collide(BoundingForm b);
-                public abstract bool Collide(OBB box);
-                public abstract bool Collide(BoundingSphere sphere);
+        //public abstract bool Collide(BoundingForm b);
+        public abstract bool Collide(OBB box);
+        public abstract bool Collide(BoundingSphere sphere);
 
 
                 //public override void Draw() {
@@ -49,16 +43,11 @@ namespace Troll3D{
                 //    //}
                 //}
 
-                public Entity link {
-                    get { return linkedto_; }
-                }
+        public Entity Link{get;private set;}
 
-            // Datas
-
-                public  bool            active_;
-                public  Vector4         Color_;
-                public  BoundingType    type_;
-                public  Entity          linkedto_;
+        public  bool            active_;
+        public  Vector4         Color_;
+        public  BoundingType    type_;
 
 
     }

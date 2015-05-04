@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using SharpDX;
 
-namespace Troll3D {
-
-    public class CollisionManager {
-
+namespace Troll3D 
+{
+    public class CollisionManager 
+    {
         public static bool AABBtoAABB(AABB boxa, AABB boxb)
         {
             if(
@@ -20,17 +20,21 @@ namespace Troll3D {
             }
             return false;
         }
+
         public static bool OBBtoOBB(OBB boxa, OBB boxb) 
         {
             return SAT.Intersect3D(boxa.GetShape(), boxb.GetShape());
         }
+
         public static bool BoundingSphereToBoundingSphere(BoundingSphere a, BoundingSphere b) 
         {
-            if ((a.transform_.WorldPosition() - b.transform_.WorldPosition()).Length() <= (a.radius_ + b.radius_)) {
+            if ((a.transform_.WorldPosition() - b.transform_.WorldPosition()).Length() <= (a.radius_ + b.radius_)) 
+            {
                 return true;
             }
             return false;
         }
+
         public static bool OBBtoBoundingSphere(OBB obox, BoundingSphere sphere) 
         {
             return SAT.Intersect3DShapeShere(obox, sphere.transform_.WorldPosition(), sphere.radius_);
@@ -40,114 +44,124 @@ namespace Troll3D {
 
         public MaterialDX11 material_;
 
-        public CollisionManager() {
-
+        public CollisionManager() 
+        {
             // Le CollisionManager charge aussi le matérial utilisé par défault par les bouding forms
             material_ = new MaterialDX11("vDefault.cso", "pUnlit.cso", "gDefault.cso");
             material_.AddConstantBuffer<Vector4>(new Vector4(0.0f, 0.0f, 1.0f, 1.0f));
                     
-            Instance        = this;
-            events_         = new Stack<CollisionEvent>();
-            boundingforms_  = new List<BoundingForm>();
-            collisionsenters_ = new List<CollisionEvent>();
+            Instance            = this;
+            events_             = new Stack<CollisionEvent>();
+            boundingforms_      = new List<BoundingForm>();
+            collisionsenters_   = new List<CollisionEvent>();
         }
 
         // Vérifie que les boites englobantes se recoupe, crée des objets 
         // Collision event 
-        public void UpdateCollisions() {
-
-            if (boundingforms_.Count > 1) {
-
-                List<CollisionEvent> toremove = new List<CollisionEvent>();
-                for (int i = 0; i < collisionsenters_.Count; i++) {
-                    if (collisionsenters_[i].a_.active_ == false || collisionsenters_[i].b_.active_ == false) {
-                        toremove.Add(collisionsenters_[i]);
+        public void UpdateCollisions() 
+        {
+            if (boundingforms_.Count > 1) 
+            {
+                for (int i = collisionsenters_.Count-1 ; i >=0 ; i--) 
+                {
+                    if (collisionsenters_[i].a_.active_ == false || collisionsenters_[i].b_.active_ == false) 
+                    {
+                        collisionsenters_.Remove( collisionsenters_[i] );
                     }
                 }
 
-                for (int i = 0; i < toremove.Count; i++) {
-                    collisionsenters_.Remove(toremove[i]);
-                }
-
-                    for (int i = 0; i < boundingforms_.Count; i++) {
-
-                        for (int j = i + 1; j < boundingforms_.Count; j++) {
-
-                            if (boundingforms_[i].active_ && boundingforms_[j].active_) {
-                                // Teste entre layers histoire de vérifier qu'on doit bien tester cette collision
-                                if (LayerManager.Instance.AreColliding(boundingforms_[i].layer_, boundingforms_[j].layer_)) {
-                                    // Si il y a une collision, je vérifie si la collision a déjà eu lieu, de manière à determiner si je retourne
-                                    // un collisionENter Event ou un COllision Event
-                                    if (Collide(boundingforms_[i], boundingforms_[j])) {
-                                        if (!DidTheyAlreadyCollide(boundingforms_[i], boundingforms_[j])) {
-                                            events_.Push(new CollisionEvent(boundingforms_[i], boundingforms_[j], CollisionType.CollisionEnter));
-                                            collisionsenters_.Add(events_.Peek());
-                                        } else {
-                                            events_.Push(new CollisionEvent(boundingforms_[i], boundingforms_[j], CollisionType.Colliding));
-                                        }
+                for (int i = 0; i < boundingforms_.Count; i++) 
+                {
+                    for (int j = i + 1; j < boundingforms_.Count; j++) 
+                    {
+                        if (boundingforms_[i].active_ && boundingforms_[j].active_) 
+                        {
+                            // Teste entre layers histoire de vérifier qu'on doit bien tester cette collision
+                            if (LayerManager.Instance.AreColliding(boundingforms_[i].layer_, boundingforms_[j].layer_)) 
+                            {
+                                // Si il y a une collision, je vérifie si la collision a déjà eu lieu, de manière à determiner si je retourne
+                                // un collisionENter Event ou un COllision Event
+                                if (Collide(boundingforms_[i], boundingforms_[j])) 
+                                {
+                                    if (!DidTheyAlreadyCollide(boundingforms_[i], boundingforms_[j])) 
+                                    {
+                                        events_.Push(new CollisionEvent(boundingforms_[i], boundingforms_[j], CollisionType.CollisionEnter));
+                                        collisionsenters_.Add(events_.Peek());
+                                    } else 
+                                    {
+                                        events_.Push(new CollisionEvent(boundingforms_[i], boundingforms_[j], CollisionType.Colliding));
                                     }
                                 }
                             }
                         }
                     }
+                }
             }
 
             // Méthode qui va vérifier si les objets qui sont en collision actuellement le sont encore et lève un événement CollisionExit
             AreTheyStillColliding();
         }
 
-                private bool DidTheyAlreadyCollide(BoundingForm a, BoundingForm b) {
-                    for (int i = 0; i < collisionsenters_.Count; i++) {
-                        if((collisionsenters_[i].a_ == a && collisionsenters_[i].b_ == b ) || 
-                        (collisionsenters_[i].a_ == b && collisionsenters_[i].b_ == a )){
-                            return true;
-                        }
-                    }
-                    return false;
+        private bool DidTheyAlreadyCollide(BoundingForm a, BoundingForm b) 
+        {
+            for (int i = 0; i < collisionsenters_.Count; i++) 
+            {
+                if((collisionsenters_[i].a_ == a && collisionsenters_[i].b_ == b ) || 
+                (collisionsenters_[i].a_ == b && collisionsenters_[i].b_ == a ))
+                {
+                    return true;
                 }
-                private void AreTheyStillColliding() {
-                    for (int i = 0; i < collisionsenters_.Count; i++) {
-                        if (Collide(collisionsenters_[i].a_, collisionsenters_[i].b_)) {
+            }
+            return false;
+        }
 
-                        } else {
-                            events_.Push(new CollisionEvent(collisionsenters_[i].a_, collisionsenters_[i].b_, CollisionType.CollisionExit));
-                            collisionsenters_.RemoveAt(i);
-                            i--;
-                        }
-                    }
+        private void AreTheyStillColliding() 
+        {
+            for (int i = 0; i < collisionsenters_.Count; i++) 
+            {
+                if (!Collide(collisionsenters_[i].a_, collisionsenters_[i].b_)) 
+                {
+                    events_.Push( new CollisionEvent( collisionsenters_[i].a_, collisionsenters_[i].b_, CollisionType.CollisionExit ) );
+                    collisionsenters_.RemoveAt( i );
+                    i--;
                 }
+            }
+        }
 
-                public bool Collide(BoundingForm a, BoundingForm b) {
-                    switch (b.type_) {
-
-                        case BoundingType.OBB:
-                            if (a.Collide((OBB)b)) {
-                                return true;
-                            }
-                            break;
-
-                        case BoundingType.Bounding_Sphere:
-                            if (a.Collide((BoundingSphere)b)) {
-                                return true;
-                            }
-                            break;
+        public bool Collide(BoundingForm a, BoundingForm b) 
+        {
+            switch (b.type_) 
+            {
+                case BoundingType.OBB:
+                    if (a.Collide((OBB)b)) 
+                    {
+                        return true;
                     }
-                    return false;
-                }
+                break;
 
-                public CollisionEvent Pop(){
-                    if(events_.Count>0){
-                        return events_.Pop();
+                case BoundingType.Bounding_Sphere:
+                    if (a.Collide((BoundingSphere)b)) 
+                    {
+                        return true;
                     }
-                    return null;
-                }
+                break;
+            }
+            return false;
+        }
 
-            // Datas
+        public CollisionEvent Pop()
+        {
+            if(events_.Count>0)
+            {
+                return events_.Pop();
+            }
+            return null;
+        }
 
-                // On tient à jour une liste de collisionEnter pour vérifier que ces éléments
-                // sont toujours en collision. S'ils ne le sont pas, on lève un événement de type COllisionExit
-                public List<CollisionEvent> collisionsenters_;
-                public Stack<CollisionEvent> events_;
-                public List<BoundingForm> boundingforms_;
+        // On tient à jour une liste de collisionEnter pour vérifier que ces éléments
+        // sont toujours en collision. S'ils ne le sont pas, on lève un événement de type COllisionExit
+        public List<CollisionEvent> collisionsenters_;
+        public Stack<CollisionEvent> events_;
+        public List<BoundingForm> boundingforms_;
     }
 }

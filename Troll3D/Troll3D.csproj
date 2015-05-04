@@ -80,6 +80,8 @@
     <Compile Include="Commons\Rect.cs" />
     <Compile Include="Components\Behaviour.cs" />
     <Compile Include="Components\Billboard.cs" />
+    <Compile Include="Components\Collider.cs" />
+    <Compile Include="Components\Collisions\BoxCollider.cs" />
     <Compile Include="Components\GUI\TLabel.cs" />
     <Compile Include="Components\GUI\TSlider.cs" />
     <Compile Include="Components\GUI\TWidget.cs" />
