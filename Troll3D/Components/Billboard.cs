@@ -11,11 +11,8 @@ namespace Troll3D
     /// </summary>
     public class Billboard : Entity
     {
-
-
         public Billboard()
         {
-
             MaterialDX11 mat = new MaterialDX11( "vBillboarding.cso", "pUnlit.cso", "gBillboarding.cso" );
             mat.SetMainColor( 0.0f, 0.0f, 1.0f, 1.0F );
 

@@ -11,8 +11,15 @@ namespace Troll3D.Components
     /// </summary>
     public class Trackview : Behaviour{
 
-        public Trackview( float radius, float mouseSpeed = 0.01f, float wheelSpeed = 0.03f )
-            : base()
+        public Trackview()
+        {
+            Xoffset = 00.0f;
+            Yoffset = 0.0f;
+            Radius = 10.0f;
+            Init( Radius, 0.01f, 0.03f );
+        }
+
+        public Trackview( float radius = 10.0f, float mouseSpeed = 0.01f, float wheelSpeed = 0.03f ): base()
         {
             Xoffset     =   00.0f;
             Yoffset     =   0.0f;

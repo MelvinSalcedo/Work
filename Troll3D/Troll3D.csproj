@@ -62,10 +62,8 @@
     <Compile Include="ApplicationDX11.cs" />
     <Compile Include="ApplicationInformation.cs" />
     <Compile Include="BitmapImage.cs" />
-    <Compile Include="Collisions\BoundingForms\AABB.cs" />
-    <Compile Include="Collisions\BoundingForms\BoundingForm.cs" />
-    <Compile Include="Collisions\BoundingForms\BoundingSphere.cs" />
-    <Compile Include="Collisions\BoundingForms\OBB.cs" />
+    <Compile Include="Components\Collisions\AABB.cs" />
+    <Compile Include="Components\Collisions\SphereCollider.cs" />
     <Compile Include="Collisions\CollisionEvent.cs" />
     <Compile Include="Collisions\Plane.cs" />
     <Compile Include="Collisions\Ray.cs" />
@@ -81,7 +79,7 @@
     <Compile Include="Components\Behaviour.cs" />
     <Compile Include="Components\Billboard.cs" />
     <Compile Include="Components\Collider.cs" />
-    <Compile Include="Components\Collisions\BoxCollider.cs" />
+    <Compile Include="Components\Collisions\OBB.cs" />
     <Compile Include="Components\GUI\TLabel.cs" />
     <Compile Include="Components\GUI\TSlider.cs" />
     <Compile Include="Components\GUI\TWidget.cs" />

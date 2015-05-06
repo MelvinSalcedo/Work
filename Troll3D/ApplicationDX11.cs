@@ -126,6 +126,8 @@ namespace Troll3D
             TimeHelper.Instance.Update();
             //m_ApplicationInformation.Update();
 
+            CollisionManager.Instance.UpdateCollisions();
+            CollisionManager.Instance.DispatchCollisions();
             InputManager.Instance.Update();
             scene_.Update();
         }
@@ -202,6 +204,7 @@ namespace Troll3D
             new ProjectorManager();
             new CollisionManager();
             new TimeHelper();
+            new LayerManager();
 
             // Initialisation de la transparence pour les RenderTexture
             RenderTargetBlendDescription renderdesc3 = new RenderTargetBlendDescription()

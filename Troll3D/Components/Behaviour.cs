@@ -9,7 +9,9 @@ namespace Troll3D.Components
     /// <summary>Cette classe est faite pour être surchargé et controler le comportement d'un objet 
     ///  de la scène. Doit être lié à Entity pour fonctionner
     /// </summary>
-    public class Behaviour : TComponent{
+    public class Behaviour : TComponent
+    {
+        public static List<Behaviour> Behaviours = new List<Behaviour>();
 
         public Behaviour() 
         {
@@ -21,6 +23,7 @@ namespace Troll3D.Components
             InputManager.Instance.MouseButtonDown += OnMouseDown;
             InputManager.Instance.MouseButtonUp += OnMouseUp;
             InputManager.Instance.MouseWheel += OnMouseWheel;
+            Behaviours.Add( this );
         }
 
         public override void Attach( Entity entity )
@@ -61,6 +64,12 @@ namespace Troll3D.Components
         public virtual void BeforeDraw() {}
 
         public virtual void AfterDraw() {}
+
+        public virtual void OnCollisionEnter( CollisionEvent e ) { }
+
+        public virtual void OnCollisionExit( CollisionEvent e ) { }
+
+        public virtual void OnCollisionStay( CollisionEvent e ) { }
 
         public  Entity      Entity;
         public  Transform   transform;

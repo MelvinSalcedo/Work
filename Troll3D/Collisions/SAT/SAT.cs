@@ -2,183 +2,202 @@
 using System.Collections.Generic;
 using SharpDX;
 
+using Troll3D.Components.Collisions;
 
-namespace Troll3D {
-
-
+namespace Troll3D
+{
     // SAT signifie Separate Axis Theorem, et permet de déterminer si 2 formes rentrent en collisions.
     // Pour se faire, on analyse chacune des 'arrêtes" de la forme que l'on souhaite analyse, et on projete les points blabla
-    public class SAT {
+    public class SAT
+    {
+        /// <summary>
+        ///  Vérifie si 2 formes rentrent en collisions
+        /// </summary>
+        public static bool Intersect3D( Shape shape1, Shape shape2 )
+        {
+            // Ces valeurs concernent le MTV, (Minimum translation vector)
+            // Elles permettent de potentiellement pousser une forme au mieux pour éviter que
+            // les formes ne se rentrent dedans 
 
-        // Public 
+            Vector3 smallestaxis;
+            float smallestmagnitude = 99999999999.0f;
 
-            // Static Methods 
-                    
-                public static bool Intersect3D(Shape shape1, Shape shape2){
+            // Shape contient déjà les axes à tester
 
-                    // Ces valeurs concernent le MTV, (Minimum translation vector)
-                    // Elles permettent de potentiellement pousser une forme au mieux pour éviter que
-                    // les formes ne se rentrent dedans 
+            Vector3[] axes = new Vector3[shape1.axes_.Length + shape2.axes_.Length + ( shape1.axes_.Length * shape2.axes_.Length )];
+            shape1.axes_.CopyTo( axes, 0 );
+            shape2.axes_.CopyTo( axes, shape1.axes_.Length );
 
-                    Vector3 smallestaxis;
-                    float smallestmagnitude = 99999999999.0f;
+            for ( int i = 0; i < shape1.axes_.Length; i++ )
+            {
+                for ( int j = 0; j < shape2.axes_.Length; j++ )
+                {
+                    axes[shape1.axes_.Length + shape2.axes_.Length + i * shape1.axes_.Length + j] =
+                        Vector3.Cross( shape1.axes_[i], shape2.axes_[j] );
+                }
+            }
 
-                    // Shape contient déjà les axes à tester
-                    
-                    
-                    Vector3[] axes = new Vector3[shape1.axes_.Length + shape2.axes_.Length + (shape1.axes_.Length * shape2.axes_.Length) ];
-                    shape1.axes_.CopyTo(axes, 0);
-                    shape2.axes_.CopyTo(axes, shape1.axes_.Length);
+            Vector3[] shape1projections = new Vector3[axes.Length];
+            Vector3[] shape2projections = new Vector3[axes.Length];
 
+            for ( int i = 0; i < axes.Length; i++ )
+            {
+                shape1projections[i] = ProjectShape( shape1, axes[i] );
+                shape2projections[i] = ProjectShape( shape2, axes[i] );
 
+                if ( !Overlap( shape1projections[i].X, shape1projections[i].Y, shape2projections[i].X, shape2projections[i].Y ) )
+                {
+                    return false;
+                }
+                else
+                {
+                    float overlapvalue = GetOverlap( shape1projections[i].X, shape1projections[i].Y, shape2projections[i].X, shape2projections[i].Y );
 
-                    for (int i = 0; i<shape1.axes_.Length; i++) {
-                        for(int j=0; j< shape2.axes_.Length; j++){
-                            axes[shape1.axes_.Length + shape2.axes_.Length + i * shape1.axes_.Length + j] =
-                                Vector3.Cross(shape1.axes_[i], shape2.axes_[j]);
-                        }
+                    if ( overlapvalue < smallestmagnitude )
+                    {
+                        smallestmagnitude = overlapvalue;
+                        smallestaxis = axes[i];
                     }
+                }
+            }
+            return true;
+        }
 
-                    Vector3[] shape1projections = new Vector3[axes.Length];
-                    Vector3[] shape2projections = new Vector3[axes.Length];
+        // La méthode Intersect va tester les axes du premier argument avec le deuxieme
+        public static bool Intersect( Shape shape1, Shape shape2 )
+        {
+            // Ces valeurs concernent le MTV, (Minimum translation vector)
+            // Elles permettent de potentiellement pousser une forme au mieux pour éviter que
+            // les formes ne se rentrent dedans 
 
-                    for (int i = 0; i < axes.Length; i++) {
+            Vector3 smallestaxis;
+            float smallestmagnitude = 99999999999.0f;
 
-                        shape1projections[i] = ProjectShape(shape1, axes[i]);
-                        shape2projections[i] = ProjectShape(shape2, axes[i]);
+            // La première étape consiste à récupérer l'intégralité des axes à tester
+            // Une normale d'un arrête de la forme correspond à un axe à traiter
 
-                        if (!Overlap(shape1projections[i].X, shape1projections[i].Y, shape2projections[i].X, shape2projections[i].Y)) {
-                            return false;
-                        } else {
-                            float overlapvalue = GetOverlap(shape1projections[i].X, shape1projections[i].Y, shape2projections[i].X, shape2projections[i].Y);
+            Vector3[] axes = new Vector3[shape1.axes_.Length + shape2.axes_.Length];
+            shape1.axes_.CopyTo( axes, 0 );
+            shape2.axes_.CopyTo( axes, shape1.axes_.Length );
 
-                            if (overlapvalue < smallestmagnitude) {
-                                smallestmagnitude = overlapvalue;
-                                smallestaxis = axes[i];
-                            }
-                        }
+            Vector3[] shape1projections = new Vector3[axes.Length];
+            Vector3[] shape2projections = new Vector3[axes.Length];
+
+            for ( int i = 0; i < axes.Length; i++ )
+            {
+                shape1projections[i] = ProjectShape( shape1, axes[i] );
+                shape2projections[i] = ProjectShape( shape2, axes[i] );
+
+                if ( !Overlap( shape1projections[i].X, shape1projections[i].Y, shape2projections[i].X, shape2projections[i].Y ) )
+                {
+                    return false;
+                }
+                else
+                {
+                    float overlapvalue = GetOverlap( shape1projections[i].X, shape1projections[i].Y, shape2projections[i].X, shape2projections[i].Y );
+
+                    if ( overlapvalue < smallestmagnitude )
+                    {
+                        smallestmagnitude = overlapvalue;
+                        smallestaxis = axes[i];
                     }
-                    return true;
+                }
+            }
+            return true;
+        }
+
+        // Projette les sommets de la forme sur l'axe passé en parametre, et retourne le segment englobant tout ces sommets
+        public static Vector3 ProjectShape( Shape shape, Vector3 axis )
+        {
+            float min = Vector3.Dot( shape.vertices_[0], axis );
+            float max = min;
+
+            for ( int i = 0; i < shape.vertices_.Length; i++ )
+            {
+                float val = Vector3.Dot( shape.vertices_[i], axis );
+
+                if ( val < min )
+                {
+                    min = val;
                 }
 
-                // La méthode Intersect va tester les axes du premier argument avec le deuxieme
-                public static bool Intersect(Shape shape1, Shape shape2) {
-
-                    // Ces valeurs concernent le MTV, (Minimum translation vector)
-                    // Elles permettent de potentiellement pousser une forme au mieux pour éviter que
-                    // les formes ne se rentrent dedans 
-
-                    Vector3 smallestaxis;
-                    float smallestmagnitude = 99999999999.0f;
-
-                    // La première étape consiste à récupérer l'intégralité des axes à tester
-                    // Une normale d'un arrête de la forme correspond à un axe à traiter
-
-                    Vector3[] axes = new Vector3[shape1.axes_.Length + shape2.axes_.Length];
-                    shape1.axes_.CopyTo(axes, 0);
-                    shape2.axes_.CopyTo(axes, shape1.axes_.Length);
-
-                    Vector3[] shape1projections = new Vector3[axes.Length];
-                    Vector3[] shape2projections = new Vector3[axes.Length];
-
-                    for (int i = 0; i < axes.Length; i++) {
-
-                        shape1projections[i] = ProjectShape(shape1, axes[i]);
-                        shape2projections[i] = ProjectShape(shape2, axes[i]);
-
-                        if (!Overlap(shape1projections[i].X, shape1projections[i].Y, shape2projections[i].X, shape2projections[i].Y)) {
-                            return false;
-                        } else {
-                            float overlapvalue = GetOverlap(shape1projections[i].X, shape1projections[i].Y, shape2projections[i].X, shape2projections[i].Y);
-
-                            if (overlapvalue < smallestmagnitude) {
-                                smallestmagnitude = overlapvalue;
-                                smallestaxis = axes[i];
-                            }
-                        }
-                    }
-                    return true;
+                if ( val > max )
+                {
+                    max = val;
                 }
+            }
 
-                // Projette les sommets de la forme sur l'axe passé en parametre, et retourne le segment englobant tout ces sommets
-                public static Vector3 ProjectShape(Shape shape, Vector3 axis) {
+            return new Vector3( min, max, 0.0f );
 
-                    float min = Vector3.Dot(shape.vertices_[0], axis);
-                    float max = min;
+        }
+        /* public static Vector3[] ComputeAxis(Shape shape) {
 
-                    for (int i = 0; i < shape.vertices_.Length; i++) {
+            Vector3[] axes = new Vector3[shape.arretes_.Length];
 
-                        float val = Vector3.Dot(shape.vertices_[i], axis);
-
-                        if (val < min) {
-                            min = val;
-                        }
-
-                        if (val > max) {
-                            max = val;
-                        }
-                    }
-
-                    return new Vector3(min, max, 0.0f);
-
-                }
-           /* public static Vector3[] ComputeAxis(Shape shape) {
-
-                Vector3[] axes = new Vector3[shape.arretes_.Length];
-
-                for (int i = 0; i < shape.arretes_.Length ; i++) {
-                    axes[i] = Vector3.Cross(shape.arretes_[i].u_ - shape.arretes_[i].v_, new Vector3(0.0f, 0.0f, 1.0f));
-                }
-                return axes;
-            }*/
+            for (int i = 0; i < shape.arretes_.Length ; i++) {
+                axes[i] = Vector3.Cross(shape.arretes_[i].u_ - shape.arretes_[i].v_, new Vector3(0.0f, 0.0f, 1.0f));
+            }
+            return axes;
+        }*/
 
 
-            public static bool Overlap(Vector3 u, Vector3 v) {
+        public static bool Overlap( Vector3 u, Vector3 v )
+        {
+            return true;
+        }
+
+
+        public static bool Overlap( float valmin1, float valmax1, float valmin2, float valmax2 )
+        {
+
+            if ( valmin2 >= valmin1 && valmin2 <= valmax1 )
+            {
                 return true;
             }
 
-
-            public static bool Overlap(float valmin1, float valmax1, float valmin2, float valmax2) {
-
-                if (valmin2 >= valmin1 && valmin2 <= valmax1) {
-                    return true;
-                }
-
-                if (valmax2 >= valmin1 && valmax2 <= valmax1) {
-                    return true;
-                }
-
-                if (valmin1 >= valmin2 && valmin1 <= valmax2) {
-                    return true;
-                }
-
-                if (valmax1 >= valmin2 && valmax1 <= valmax2) {
-                    return true;
-                }
-
-                return false;
+            if ( valmax2 >= valmin1 && valmax2 <= valmax1 )
+            {
+                return true;
             }
 
-            public static float GetOverlap(float valmin1, float valmax1, float valmin2, float valmax2) {
-
-                if (valmin2 >= valmin1 && valmin2 <= valmax1) {
-                    float max = valmax2;
-                    if (valmax1 > valmax2) {
-                        max = valmax1;
-                    }
-                    return max - valmin2;
-                }
-
-                if (valmax2 >= valmin1 && valmax2 <= valmax1) {
-                    float min = valmin1;
-                    if (valmin2 > valmin1) {
-                        min = valmin2;
-                    }
-                    return valmax2 - min;
-                }
-
-                return 0.0f;
+            if ( valmin1 >= valmin2 && valmin1 <= valmax2 )
+            {
+                return true;
             }
+
+            if ( valmax1 >= valmin2 && valmax1 <= valmax2 )
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static float GetOverlap( float valmin1, float valmax1, float valmin2, float valmax2 )
+        {
+
+            if ( valmin2 >= valmin1 && valmin2 <= valmax1 )
+            {
+                float max = valmax2;
+                if ( valmax1 > valmax2 )
+                {
+                    max = valmax1;
+                }
+                return max - valmin2;
+            }
+
+            if ( valmax2 >= valmin1 && valmax2 <= valmax1 )
+            {
+                float min = valmin1;
+                if ( valmin2 > valmin1 )
+                {
+                    min = valmin2;
+                }
+                return valmax2 - min;
+            }
+
+            return 0.0f;
+        }
 
 
 
@@ -297,108 +316,117 @@ namespace Troll3D {
         //}
 
 
-            public static bool Intersect3DShapeShere(OBB box, Vector3 position, float radius) {
+        public static bool Intersect3DShapeShere( OBB box, Vector3 position, float radius )
+        {
 
-                // On récupère le sommet le plus proche du cercle
+            // On récupère le sommet le plus proche du cercle
 
-                float min = 99999999999999.0f;
-                Shape shape1 = box.GetShape();
+            float min = 99999999999999.0f;
+            Shape shape1 = box.GetShape();
 
-                //for (int i = 0; i < shape1.vertices_.Length; i++) {
-                //    Vector3 vec = shape1.vertices_[i] - position;
+            //for (int i = 0; i < shape1.vertices_.Length; i++) {
+            //    Vector3 vec = shape1.vertices_[i] - position;
 
-                //    if (vec.Length() < min) {
-                //        minindex = i;
-                //        min = vec.Length();
-                //    }
-                //}
+            //    if (vec.Length() < min) {
+            //        minindex = i;
+            //        min = vec.Length();
+            //    }
+            //}
 
-                Vector3 closestpoint = GetClosestPointInOBB(box, position);
-                Vector3 circleaxis = position - closestpoint;
+            Vector3 closestpoint = GetClosestPointInOBB( box, position );
+            Vector3 circleaxis = position - closestpoint;
 
-                // Affiche le closest point
-               // DirectxApplication.Instance.primitiverenderer_.AddPrimitive(new T3DPoint(closestpoint, 0.1f, Color.Purple));
-               // Console.WriteLine("circleaxis " + circleaxis + " sphere position " + position + " closest v " + shape1.vertices_[minindex]);
+            // Affiche le closest point
+            // DirectxApplication.Instance.primitiverenderer_.AddPrimitive(new T3DPoint(closestpoint, 0.1f, Color.Purple));
+            // Console.WriteLine("circleaxis " + circleaxis + " sphere position " + position + " closest v " + shape1.vertices_[minindex]);
 
-                // J'ai aucune idée du pourquoi mais il faut faire le cross product entre les 
-                // axes de séparations des 2 formes
-                //Vector3[] crossaxes = new Vector3[shape1.axes_.Length * 1];
+            // J'ai aucune idée du pourquoi mais il faut faire le cross product entre les 
+            // axes de séparations des 2 formes
+            //Vector3[] crossaxes = new Vector3[shape1.axes_.Length * 1];
 
-                //for (int i = 0; i < shape1.axes_.Length; i++) {
-                //    crossaxes[i] = Vector3.Cross(shape1.axes_[i], circleaxis);
-                //}
+            //for (int i = 0; i < shape1.axes_.Length; i++) {
+            //    crossaxes[i] = Vector3.Cross(shape1.axes_[i], circleaxis);
+            //}
 
-                circleaxis.Normalize();
-                Vector3[] axes = new Vector3[shape1.axes_.Length +1 ];
-                shape1.axes_.CopyTo(axes, 0);
-                //crossaxes.CopyTo(axes, shape1.axes_.Length);
-                axes[axes.Length-1] = circleaxis;
+            circleaxis.Normalize();
+            Vector3[] axes = new Vector3[shape1.axes_.Length + 1];
+            shape1.axes_.CopyTo( axes, 0 );
+            //crossaxes.CopyTo(axes, shape1.axes_.Length);
+            axes[axes.Length - 1] = circleaxis;
 
 
-                // On récupére les 2 sommets qui travers le cercle 
-                Vector3[] circlevertices;
-                Shape shapecircle = new Shape(); ;
+            // On récupére les 2 sommets qui travers le cercle 
+            Vector3[] circlevertices;
+            Shape shapecircle = new Shape(); ;
 
-                for (int i = 0; i < axes.Length; i++) {
+            for ( int i = 0; i < axes.Length; i++ )
+            {
 
-                    circlevertices = new Vector3[2];
-                    circlevertices[0] = position + axes[i] * radius;
-                    circlevertices[1] = position - axes [i]* radius;
+                circlevertices = new Vector3[2];
+                circlevertices[0] = position + axes[i] * radius;
+                circlevertices[1] = position - axes[i] * radius;
 
-                     shapecircle = new Shape(circlevertices, null);
+                shapecircle = new Shape( circlevertices, null );
 
-                     Vector3 proj1 = ProjectShape(shape1, axes[i]);
-                     Vector3 proj2 = ProjectShape(shapecircle, axes[i]);
+                Vector3 proj1 = ProjectShape( shape1, axes[i] );
+                Vector3 proj2 = ProjectShape( shapecircle, axes[i] );
 
-                    if (!Overlap(proj1.X, proj1.Y, proj2.X, proj2.Y)) {
-                     
-                        return false;
-                    } else {
-                   
-                        float overlapvalue = GetOverlap(proj1.X, proj1.Y, proj2.X, proj2.Y);
+                if ( !Overlap( proj1.X, proj1.Y, proj2.X, proj2.Y ) )
+                {
 
-                        //if (overlapvalue < smallestmagnitude) {
-                        //    smallestmagnitude = overlapvalue;
-                        //    smallestaxis = shapeaxis[i];
-                        //}
-                    }
+                    return false;
                 }
+                else
+                {
 
-               
+                    float overlapvalue = GetOverlap( proj1.X, proj1.Y, proj2.X, proj2.Y );
 
-                return true;
+                    //if (overlapvalue < smallestmagnitude) {
+                    //    smallestmagnitude = overlapvalue;
+                    //    smallestaxis = shapeaxis[i];
+                    //}
+                }
             }
 
-            // L'idée, " en gros", est de récupérer le vecteur entre le centre de la boite et le point désiré
-            // Puis, de projeter le vecteur sur chacun des axes de la box, puis "clamp" par rapport aux 
-            // valeurs des axes
-            public static Vector3 GetClosestPointInOBB(OBB box, Vector3 point) {
 
-                Vector3 dir = point - box.transform_.WorldPosition();
 
-                Vector3 returnvec = box.transform_.WorldPosition(); ;
-                // Pour chaque axe de la boite
-                
-                // Up, right, forward
-                float[] coefs = new float[3];
-                coefs[0] = box.transform_.scaling_.Y/2.0f;
-                coefs[1] = box.transform_.scaling_.X / 2.0f;
-                coefs[2] = box.transform_.scaling_.Z / 2.0f;
+            return true;
+        }
 
-                for(int i=0; i< box.GetShape().axes_.Length; i++){
+        // L'idée, " en gros", est de récupérer le vecteur entre le centre de la boite et le point désiré
+        // Puis, de projeter le vecteur sur chacun des axes de la box, puis "clamp" par rapport aux 
+        // valeurs des axes
+        public static Vector3 GetClosestPointInOBB( OBB box, Vector3 point )
+        {
+            Vector3 dir = point - box.transform_.WorldPosition();
 
-                    float dist = Vector3.Dot(dir,box.GetShape().axes_[i]);
+            Vector3 returnvec = box.transform_.WorldPosition(); ;
+            // Pour chaque axe de la boite
 
-                    if(dist> coefs[i]){
-                        dist= coefs[i];
-                    } else if (dist < -coefs[i]) {
-                        dist = -coefs[i];
-                    }
+            // Up, right, forward
+            float[] coefs = new float[3];
+            coefs[0] = box.transform_.scaling_.Y / 2.0f;
+            coefs[1] = box.transform_.scaling_.X / 2.0f;
+            coefs[2] = box.transform_.scaling_.Z / 2.0f;
 
-                    returnvec += dist * box.GetShape().axes_[i];
+            for ( int i = 0; i < box.GetShape().axes_.Length; i++ )
+            {
+
+                float dist = Vector3.Dot( dir, box.GetShape().axes_[i] );
+
+                if ( dist > coefs[i] )
+                {
+                    dist = coefs[i];
                 }
-                return returnvec;
+                else if ( dist < -coefs[i] )
+                {
+                    dist = -coefs[i];
+                }
+
+                returnvec += dist * box.GetShape().axes_[i];
             }
+            return returnvec;
+        }
         //public static bool IntersectPolygonCircle(Shape shape1, Circle circle) {
 
         //    // Ces valeurs concernent le MTV, (Minimum translation vector)

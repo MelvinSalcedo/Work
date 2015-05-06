@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Troll3D{
+using Troll3D.Components.Collisions;
+using Troll3D.Components;
 
-
-    public enum CollisionType {
+namespace Troll3D
+{
+    public enum CollisionType 
+    {
         CollisionEnter,
         CollisionExit,
         Colliding
@@ -17,17 +20,18 @@ namespace Troll3D{
     // entre 2 boites englobantes
     public class CollisionEvent {
 
-        public CollisionEvent(BoundingForm a, BoundingForm b, CollisionType type) {
+        public CollisionEvent( Collider a, Collider b, CollisionType type ) 
+        {
             type_ = type;
             a_ = a;
             b_ = b; 
         }
 
         /// <summary> Première forme </summary>
-        public BoundingForm a_;
+        public Collider a_;
 
         /// <summary> Deuxième forme</summary>
-        public BoundingForm b_;
+        public Collider b_;
 
         public CollisionType type_;
     }

@@ -61,7 +61,7 @@ namespace Troll3D.Rendering
         public int Width  { get; protected set; }
         public int Height { get; protected set; }
 
-        public Color4 ClearColor        = new Color4(0.0f,0.0f,0.0f,1.0F);
+        public Color4 ClearColor        = new Color4(0.7f,0.7f,0.7f,1.0F);
         public List<Viewport> Viewports = new List<Viewport>();
         public DepthStencil DepthStencil;
     }
