@@ -95,7 +95,9 @@ namespace Troll3D{
             {
                 SharpDX.Utilities.Dispose<SharpDX.Direct3D11.Buffer>(ref m_Indexbuffer);
             }
-            m_Indexbuffer = SharpDX.Direct3D11.Buffer.Create(ApplicationDX11.Instance.device_,
+
+            m_Indexbuffer = SharpDX.Direct3D11.Buffer.Create(
+                ApplicationDX11.Instance.device_,
                 BindFlags.IndexBuffer,
                 GetFaceIndexesArray());
         }
@@ -103,6 +105,7 @@ namespace Troll3D{
         /// <summary> Retourne un tableau d'entier contenant les indices des faces utilisable par directX</summary>
         private int[] GetFaceIndexesArray()
         {
+
             int[] indexes = new int[Faces.Count * 3];
 
             int count = 0;

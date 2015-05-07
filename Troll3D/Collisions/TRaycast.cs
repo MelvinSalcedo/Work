@@ -42,7 +42,6 @@ namespace Troll3D
 
         public static TrollRay GetRayFromMouse()
         {
-
             // En premier lieu, on récupère la position de la souris sur l'écran
             Vector2 MousePosition = InputManager.Instance.mouseInformation.xy;
 

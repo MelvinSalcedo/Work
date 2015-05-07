@@ -16,6 +16,11 @@ namespace Troll3D.Components
         public MeshRenderer() 
         {
             Type = ComponentType.MeshRenderer;
+
+            mode = FillMode.Solid;
+            RasterizerStateDescription rasterDescription = ApplicationDX11.Instance.devicecontext_.Rasterizer.State.Description;
+            rasterDescription.FillMode = mode;
+            State = new RasterizerState( ApplicationDX11.Instance.device_, rasterDescription );
         }
 
         public MeshRenderer( MaterialDX11 material, Mesh model )
@@ -55,7 +60,11 @@ namespace Troll3D.Components
             LightManager.Instance.SendLights();
 
             material_.Begin();
-            model_.Render();
+            if ( model_ != null )
+            {
+                model_.Render();
+            }
+            
             material_.End();
         }
 

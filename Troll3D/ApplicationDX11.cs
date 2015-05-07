@@ -18,7 +18,6 @@ using Troll3D.Rendering;
 
 namespace Troll3D
 {
-
     public class ApplicationDX11
     {
         public static DeviceContext DeviceContext()
