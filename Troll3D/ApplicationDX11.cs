@@ -85,6 +85,11 @@ namespace Troll3D
             m_ApplicationInformation.AddTriangles( indexCount / 3 );
         }
 
+        public void Draw(int vertexCount, int startVertexLocation)
+        {
+            devicecontext_.Draw( vertexCount, startVertexLocation );
+        }
+
         public void Run()
         {
             Run( m_renderForm );
@@ -118,6 +123,7 @@ namespace Troll3D
         {
             UpdateLogic();
             DrawScene();
+            DebugRenderer.Instance.Update();
         }
 
         private void UpdateLogic()
@@ -204,6 +210,7 @@ namespace Troll3D
             new CollisionManager();
             new TimeHelper();
             new LayerManager();
+            
 
             // Initialisation de la transparence pour les RenderTexture
             RenderTargetBlendDescription renderdesc3 = new RenderTargetBlendDescription()

@@ -47,6 +47,7 @@
     <Compile Include="CSVFile.cs" />
     <Compile Include="File.cs" />
     <Compile Include="Maths\Matrix4x4.cs" />
+    <Compile Include="Maths\PerlinNoise.cs" />
     <Compile Include="Maths\Quaternion.cs" />
     <Compile Include="Maths\Rect.cs" />
     <Compile Include="Maths\Vec3.cs" />

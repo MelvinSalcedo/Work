@@ -59,6 +59,11 @@ namespace Troll3D
 
         public virtual void UpdateTransform() {}
 
+        public void RemoveRenderable( IRenderable renderable )
+        {
+            Renderables.Remove( renderable );
+        }
+
         public void Render( )
         {
             //Camera.SetCameraView();

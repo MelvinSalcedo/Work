@@ -26,6 +26,13 @@ namespace Troll3D.Common.IA.PathFinding
             return GetPath();
         }
 
+        /// <summary>
+        /// Invoquez cette méthode pour démarrer le calcul de chemin
+        /// </summary>
+        public void Start( Node startNode, Node endNode )
+        {
+
+        }
 
         public bool Process()
         {
@@ -35,7 +42,6 @@ namespace Troll3D.Common.IA.PathFinding
             }
             return false;
         }
-
 
         /// <summary>
         /// Inspecte les voisins du noeud passé en paramètre et les rajoute dans la liste ouverte

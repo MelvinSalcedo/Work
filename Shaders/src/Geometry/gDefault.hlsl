@@ -25,3 +25,4 @@ void main(triangle PixelInput input[3], inout TriangleStream<PixelInput> OutputS
 	OutputStream.Append(input[1]);
 	OutputStream.Append(input[2]);
 }
+

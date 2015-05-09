@@ -28,20 +28,21 @@ namespace Troll3D
     {
         public TImage( int width, int height )
         {
-            width_ = width;
-            height_ = height;
-            datas_ = new float[width_ * height_ * 4];
+            Width = width;
+            Height = height;
+            datas_ = new float[Width * Height * 4];
         }
 
         public TImage( float[] datas, int width, int height )
         {
-            datas_ = datas;
-            width_ = width;
-            height_ = height;
+            datas_  = datas;
+            Width   = width;
+            Height  = height;
         }
 
-        // Methods
-
+        /// <summary>
+        /// Retourne une ressource utilisable par DirectX
+        /// </summary>
         public Resource GetTexture2D()
         {
             SharpDX.DXGI.SampleDescription sampleDescription = new SharpDX.DXGI.SampleDescription()
@@ -49,11 +50,11 @@ namespace Troll3D
                 Count = 1
             };
 
-            DataStream stre = new DataStream( width_ * height_ * 4 * 4, true, true );
+            DataStream stre = new DataStream( Width* Height* 4 * 4, true, true );
 
-            for ( int i = 0; i < height_; i++ )
+            for ( int i = 0; i < Height; i++ )
             {
-                for ( int j = 0; j < width_; j++ )
+                for ( int j = 0; j < Width; j++ )
                 {
                     stre.Write( GetPixel( j, i ).r );
                     stre.Write( GetPixel( j, i ).g );
@@ -65,8 +66,8 @@ namespace Troll3D
             Texture2DDescription description = new Texture2DDescription()
             {
                 ArraySize = 1,
-                Width = width_,
-                Height = height_,
+                Width = Width,
+                Height = Height,
                 MipLevels = 1,
                 Format = SharpDX.DXGI.Format.R32G32B32A32_Float,
                 Usage = ResourceUsage.Dynamic,
@@ -76,7 +77,7 @@ namespace Troll3D
                 SampleDescription = sampleDescription
             };
 
-            DataRectangle rec = new DataRectangle( stre.DataPointer, width_ * 4 * 4 );
+            DataRectangle rec = new DataRectangle( stre.DataPointer, Width * 4 * 4 );
 
             Texture2D texture2D = new Texture2D( ApplicationDX11.Instance.device_, description, rec );
 
@@ -90,29 +91,39 @@ namespace Troll3D
         public TPixel GetPixel( int x, int y )
         {
             return new TPixel(
-                datas_[y * width_ * 4 + x * 4],
-                datas_[y * width_ * 4 + x * 4 + 1],
-                datas_[y * width_ * 4 + x * 4 + 2],
-                datas_[y * width_ * 4 + x * 4 + 3]
+                datas_[y * Width * 4 + x * 4],
+                datas_[y * Width * 4 + x * 4 + 1],
+                datas_[y * Width * 4 + x * 4 + 2],
+                datas_[y * Width * 4 + x * 4 + 3]
                 );
         }
 
-        public int Width { get { return width_; } }
-        public int Height { get { return height_; } }
+        public void SetData( float[] datas )
+        {
+            if ( datas.Length != Width * Height * 4 )
+            {
+                throw new IndexOutOfRangeException( "Erreur, le tableau n'est pas aux même dimension que l'image" );
+            }
+
+            for ( int i = 0; i < datas.Length; i++ )
+            {
+                datas_[i] = datas[i];
+            }
+        }
+
+        public int Width { get; private set; }
+        public int Height { get; private set; }
         public float[] Data { get { return datas_; } }
 
 
         public void SetPixel( int x, int y, float r, float g, float b, float a )
         {
-            datas_[y * width_ * 4 + x * 4] = r;
-            datas_[y * width_ * 4 + x * 4 + 1] = g;
-            datas_[y * width_ * 4 + x * 4 + 2] = b;
-            datas_[y * width_ * 4 + x * 4 + 3] = a;
+            datas_[y * Width * 4 + x * 4] = r;
+            datas_[y * Width * 4 + x * 4 + 1] = g;
+            datas_[y * Width * 4 + x * 4 + 2] = b;
+            datas_[y * Width * 4 + x * 4 + 3] = a;
         }
 
-        private bool isfloat_;
-        private int width_;
-        private int height_;
         private float[] datas_;
     }
 }

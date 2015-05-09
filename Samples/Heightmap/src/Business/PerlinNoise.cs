@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SharpDX;
+using SharpDX.Direct3D9;
+using Troll3D;
 
-
-namespace Troll3D
+namespace Heightmap
 {
     public class PerlinNoise{
 
@@ -14,40 +15,47 @@ namespace Troll3D
 
             // Static Methods
 
-                public static float[] GetDatas(int octaves, int perlinwidth, int seed, int texwidth){
-
+                public static byte[] GetDatas(int octaves, int perlinwidth, int seed, int texwidth)
+                {
                     List<PerlinNoise> noises = new List<PerlinNoise>();
 
                     int lastval = perlinwidth;
                     noises.Add(new PerlinNoise(perlinwidth, perlinwidth, seed));
 
-                    for (int i = 1; i < octaves; i++){
+                    for (int i = 1; i < octaves; i++)
+                    {
+
                         noises.Add(new PerlinNoise(lastval * 2, lastval * 2, seed));
                         lastval = lastval * 2;
                     }
 
-                    float[] image = new float[texwidth * texwidth * 4];
+                    byte[] image = new byte[texwidth * texwidth * 4];
 
-                    for (int i = 0; i < texwidth; i++){
-                        for (int j = 0; j < texwidth; j++){
+                    for (int i = 0; i < texwidth; i++)
+                    {
+                        for (int j = 0; j < texwidth; j++)
+                        {
 
-                            float noiseval  = 0.0f;
-                            lastval         = 1;
+                            float noiseval = 0.0f;
+
+                            lastval = 1;
 
                             noiseval += 1.0f / (float)lastval * noises[0].GetNoise((float)j / (float)texwidth, (float)i / (float)texwidth);
                             lastval = lastval * 2;
-                            for (int h = 1; h < noises.Count; h++){
+                            for (int h = 1; h < noises.Count; h++)
+                            {
                                 noiseval += 1.0f / ((float)lastval) * noises[h].GetNoise((float)j / (float)texwidth, (float)i / (float)texwidth);
                                 lastval = lastval * 2;
                             }
 
-                            // pour faire une "rampe" autours de -1 1 il me semble
                             noiseval = (noiseval + (3.75f * 0.5f)) / 3.75f;
 
-                            image[((i * texwidth + j) * 4) + 0] = noiseval;
-                            image[((i * texwidth + j) * 4) + 1] = noiseval;
-                            image[((i * texwidth + j) * 4) + 2] = noiseval;
-                            image[((i * texwidth + j) * 4) + 3] = 1.0f;
+                            byte val = (byte)(255 * noiseval);
+                            image[((i * texwidth + j) * 4) + 0] = val;
+                            image[((i * texwidth + j) * 4) + 1] = val;
+                            image[((i * texwidth + j) * 4) + 2] = val;
+                            image[((i * texwidth + j) * 4) + 3] = 255;
+
                         }
                     }
 

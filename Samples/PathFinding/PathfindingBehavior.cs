@@ -59,6 +59,15 @@ namespace PathFinding
 
         public void ComputePath()
         {
+            ComputeAStarPath();
+            ComputeDijstraPath();
+        }
+
+        /// <summary>
+        /// Calcule le chemin en utilisant l'algorithme de A étoile
+        /// </summary>
+        public void ComputeAStarPath()
+        {
             AStar astar = new AStar( m_graph );
             astar.Start( m_graph.GetNode( m_startY * 10 + m_startX ), m_graph.GetNode( m_endY * 10 + m_endX ) );
             List<Node> nodes = astar.Execute();
@@ -66,13 +75,21 @@ namespace PathFinding
 
             for ( int i = 0; i < nodes.Count; i++ )
             {
-                AStarNode node = (AStarNode)nodes[i];
+                AStarNode node = ( AStarNode )nodes[i];
                 m_tilemap.SetTileVal( ( int )node.Position.X, ( int )node.Position.Y, 5 );
                 if ( node.Position.X == m_endX && node.Position.Y == m_endY )
                 {
                     m_tilemap.SetTileVal( ( int )node.Position.X, ( int )node.Position.Y, 3 );
                 }
             }
+        }
+
+        /// <summary>
+        /// Calcule le chemin en utilisant l'algorithme de Dijkstra
+        /// </summary>
+        public void ComputeDijstraPath()
+        {
+            Dijkstra dijkstra = new Dijkstra( m_graph );
         }
 
         /// <summary>

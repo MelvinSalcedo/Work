@@ -14,7 +14,8 @@ namespace Troll3D.Components
         Light,
         Camera,
         TileMap,
-        Collider
+        Collider,
+        LineRenderer
     }
 
     public abstract class TComponent

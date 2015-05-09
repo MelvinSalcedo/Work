@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX;
 using D3D11 = SharpDX.Direct3D11;
 using SharpDX.Direct3D;
+using SharpDX.Direct3D11;
 
 namespace Troll3D{
 
