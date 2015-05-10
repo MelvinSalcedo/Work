@@ -61,6 +61,16 @@ namespace DelaunayTriangularisation.WingedEdge
         }
 
         /// <summary>
+        /// Retourne une liste de face voisines à la face passé en paramètre
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public List<FaceWE> GetFaceNeighbours( FaceWE f )
+        {
+
+        }
+
+        /// <summary>
         /// Connecte les sommets passés en paramètre à condition qu'ils existent à l'intérieur de la
         /// structure
         /// </summary>
@@ -81,9 +91,8 @@ namespace DelaunayTriangularisation.WingedEdge
         public FaceWE AddFace( VertexWE v1, VertexWE v2, VertexWE v3 )
         {
             // On commence par vérifier si la face n'a pas déjà été crée
-            if ( !FaceAlreadyExist( v1, v2, v3 ) )
+            if ( FaceAlreadyExist( v1, v2, v3 ) ==null )
             {
-
                 // On vérifie si les sommets sont dans le bon ordre 
 
                 if ( !IsTriangleClockwise( v1, v2, v3 ) )
@@ -178,13 +187,7 @@ namespace DelaunayTriangularisation.WingedEdge
                 Faces.Add( f );
                 return f;
             }
-            else
-            {
-                Console.WriteLine( "lol" );
-            }
             return null;
-
-
         }
 
         /// <summary>
@@ -371,7 +374,7 @@ namespace DelaunayTriangularisation.WingedEdge
         /// <summary>
         /// Vérifie si une face n'a pas déjà été ajoutée
         /// </summary>
-        private bool FaceAlreadyExist( VertexWE v1, VertexWE v2, VertexWE v3 )
+        private FaceWE FaceAlreadyExist( VertexWE v1, VertexWE v2, VertexWE v3 )
         {
             foreach ( FaceWE face in Faces )
             {
@@ -395,10 +398,10 @@ namespace DelaunayTriangularisation.WingedEdge
                 }
                 if ( v1founded && v2founded && v3founded )
                 {
-                    return true;
+                    return face;
                 }
             }
-            return false;
+            return null;
         }
 
         /// <summary>
