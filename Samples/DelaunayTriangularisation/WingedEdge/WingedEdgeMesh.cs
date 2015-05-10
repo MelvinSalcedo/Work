@@ -122,6 +122,8 @@ namespace DelaunayTriangularisation.WingedEdge
                 if ( e1 == null )
                 {
                     e1 = new EdgeWE( v1, v2 );
+                    v1.Edges.Add( e1 );
+                    v2.Edges.Add( e1 );
                     Edges.Add( e1 );
                     e1.LeftFace = f;
                 }
@@ -140,6 +142,10 @@ namespace DelaunayTriangularisation.WingedEdge
                 if ( e2 == null )
                 {
                     e2 = new EdgeWE( v2, v3 );
+
+                    v2.Edges.Add( e2 );
+                    v3.Edges.Add( e2 );
+
                     Edges.Add( e2 );
                     e2.LeftFace = f;
                 }
@@ -158,6 +164,8 @@ namespace DelaunayTriangularisation.WingedEdge
                 if ( e3 == null )
                 {
                     e3 = new EdgeWE( v3, v1 );
+                    v3.Edges.Add( e3 );
+                    v1.Edges.Add( e3 );
                     e3.LeftFace = f; 
                     Edges.Add( e3 );
                 }
@@ -238,7 +246,7 @@ namespace DelaunayTriangularisation.WingedEdge
 
         /// <summary>
         /// Vérifie si une des arrêtes de la face est un "bord", c'est à dire que l'arrête
-        /// n'a qu'une seule face d'enregistrer
+        /// n'a qu'une seule face d'enregistré
         /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>
@@ -249,6 +257,19 @@ namespace DelaunayTriangularisation.WingedEdge
                 if ( e.LeftFace == null || e.RightFace == null )
                 {
                     return true;
+                }
+            }
+
+            List<VertexWE> v = GetFaceVertices( f );
+
+            foreach ( VertexWE vertex in v )
+            {
+                foreach ( EdgeWE e in vertex.Edges )
+                {
+                    if ( e.LeftFace == null || e.RightFace == null )
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -348,7 +369,6 @@ namespace DelaunayTriangularisation.WingedEdge
                     e.Vertex2.Edges.Remove( e );
                 }
             }
-
             Faces.Remove( f );
         }
 

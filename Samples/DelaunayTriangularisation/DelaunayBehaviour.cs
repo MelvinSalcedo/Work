@@ -16,6 +16,17 @@ namespace DelaunayTriangularisation
     {
         public MeshRenderer meshRenderer;
 
+        public void CleanVoronoi()
+        {
+            // On commence par "effacer" les derniers points
+            for ( int i = 0; i < VoronoiPoints.Count; i++ )
+            {
+                Scene.CurrentScene.RemoveRenderable( ( MeshRenderer )VoronoiPoints[i].GetComponent( ComponentType.MeshRenderer ) );
+            }
+            VoronoiPoints.Clear();
+            ( ( LineRenderer )VoronoiLines.GetComponent( ComponentType.LineRenderer ) ).Display = false;
+        }
+
         /// <summary>
         /// Construit une représentation graphique du Diagramme de Voronoi de la triangulation
         /// </summary>
@@ -25,15 +36,8 @@ namespace DelaunayTriangularisation
 
             // On va commencer par construire les sommets correspondant aux centre des faces de la triangulation
             // qui sont les noeuds du diagramme de voronoir
-
-            // On commence par "effacer" les derniers points
-            for(int i=0; i< VoronoiPoints.Count; i++)
-            {
-                Scene.CurrentScene.RemoveRenderable((MeshRenderer) VoronoiPoints[i].GetComponent(ComponentType.MeshRenderer));
-            }
-
-            VoronoiPoints.Clear();
-
+             CleanVoronoi();
+            
             for ( int i = 0; i < mesh.Faces.Count; i++ )
             {
                 // On récupère le centre de la face (barycentre)
@@ -52,7 +56,7 @@ namespace DelaunayTriangularisation
                 entity.transform_.SetScale( 0.02f, 0.02f, 1.0f );
 
                 MaterialDX11 material = new MaterialDX11();
-                material.SetMainColor( 1.0f, 1.0f, 0.0f, 1.0f );
+                material.SetMainColor( 0.0f, 1.0f, 1.0f, 1.0f );
                 MeshRenderer meshrenderer = entity.AddComponent<MeshRenderer>();
                 meshrenderer.material_ = material;
                 meshrenderer.model_ = Quad.GetMesh();
@@ -77,9 +81,13 @@ namespace DelaunayTriangularisation
                 VoronoiPoints.Add( entity );
             }
 
-
-            ( ( LineRenderer )VoronoiLines.GetComponent( ComponentType.LineRenderer ) ).Vertices = lines;
-            ( ( LineRenderer )VoronoiLines.GetComponent( ComponentType.LineRenderer ) ).UpdateRenderer();
+            if ( lines.Count > 0 )
+            {
+                ( ( LineRenderer )VoronoiLines.GetComponent( ComponentType.LineRenderer ) ).Display = true;
+                ( ( LineRenderer )VoronoiLines.GetComponent( ComponentType.LineRenderer ) ).Vertices = lines;
+                ( ( LineRenderer )VoronoiLines.GetComponent( ComponentType.LineRenderer ) ).UpdateRenderer();
+            }
+            
         }
 
         public List<Entity> VoronoiPoints = new List<Entity>();
@@ -90,7 +98,7 @@ namespace DelaunayTriangularisation
             VoronoiLines = new Entity();
             LineRenderer lr =  VoronoiLines.AddComponent<LineRenderer>();
             lr.material_ = new MaterialDX11("vDefault.cso","pUnlit.cso","gDefaultLine.cso");
-            lr.material_.SetMainColor( 1.0f, 1.0f, 0.0f, 1.0f );
+            lr.material_.SetMainColor( 0.0f, 0.0f, 1.0f, 1.0f );
 
             meshRenderer = Entity.AddComponent<MeshRenderer>();
             meshRenderer.material_ = new MaterialDX11();
@@ -210,7 +218,7 @@ namespace DelaunayTriangularisation
 
         public bool IsPointInCircle( Vector3 point, Vector3 circle, float radius )
         {
-            return ( ( circle - point ).Length() < (radius-0.0001f) );
+            return ( ( circle - point ).Length() < (radius-0.01f) );
         }
 
         public List<Entity> CircleCenter = new List<Entity>();
@@ -264,7 +272,6 @@ namespace DelaunayTriangularisation
 
                     if ( IsPointInCircle( leftOppositeVertex.Position, rightCircleCenter, rightCircleRadius ) || IsPointInCircle( rightOppositeVertex.Position, leftCircleCenter, leftCircleRadius) )
                     {
-                        Console.WriteLine( "Flip Edge" );
 
                         // On bascule l'arrête
                         List<FaceWE> newfaces = mesh.FlipEdge( e );
@@ -354,6 +361,56 @@ namespace DelaunayTriangularisation
                 }
             }
 
+            // Je retire les parties du maillage qui sont utilisé pour construire la triangulation
+
+            List<FaceWE> faceToRemove = new List<FaceWE>();
+
+            for ( int i = mesh.Faces.Count - 1; i >= 0; i-- )
+            {
+                if ( mesh.IsFaceBorder( mesh.Faces[i] ) )
+                {
+                    faceToRemove.Add( mesh.Faces[i] );
+                }
+            }
+
+            for ( int i = 0; i < faceToRemove.Count; i++ )
+            {
+                mesh.RemoveFace( faceToRemove[i]);
+            }
+
+                for ( int i = 0; i < CircleCenter.Count; i++ )
+                {
+                    Scene.CurrentScene.RemoveRenderable( ( MeshRenderer )CircleCenter[i].GetComponent( ComponentType.MeshRenderer ) );
+                }
+
+                if ( DisplayCenters )
+                {
+                    for ( int i = 0; i < Circles.Count; i++ )
+                    {
+                        Scene.CurrentScene.RemoveRenderable( ( LineRenderer )Circles[i].GetComponent( ComponentType.LineRenderer ) );
+                    }
+
+                    CircleCenter.Clear();
+
+                    for ( int i = 0; i < mesh.Faces.Count; i++ )
+                    {
+                        List<VertexWE> vertices = mesh.GetFaceVertices( mesh.Faces[i] );
+
+                        Vector3 circleCenter = GetCircleCenter( vertices[0].Position, vertices[1].Position, vertices[2].Position );
+                        float radius = GetCircleRadius( vertices[0].Position, vertices[1].Position, vertices[2].Position, circleCenter );
+
+                        AddCircleCenter( circleCenter.X, circleCenter.Y, radius );
+                    }
+                }
+                else
+                {
+                    for ( int i = 0; i < Circles.Count; i++ )
+                    {
+                        Scene.CurrentScene.RemoveRenderable( ( LineRenderer )Circles[i].GetComponent( ComponentType.LineRenderer ) );
+                    }
+                    CircleCenter.Clear();
+                }
+
             if ( mesh.MakeMesh() != null )
             {
                 meshRenderer.model_ = mesh.MakeMesh();
@@ -364,22 +421,57 @@ namespace DelaunayTriangularisation
             {
             }
 
-            BuildVoronoi(mesh);
-
+            if ( DisplayVoronoi )
+            {
+                BuildVoronoi( mesh );
+            }
+            else
+            {
+                CleanVoronoi();
+            }
         }
 
-        public void Start()
-        {
 
+        public Entity pointDragged = null;
+        public bool IsDragging = false;
+
+        public override void OnMouseMove( MouseEvent e )
+        {
+            if ( IsDragging )
+            {
+                pointDragged.transform_.position_ = new Vector3( e.mouse_.x / ( float )Screen.Instance.Width * 2 - 1.0f,
+                    1.0f - e.mouse_.y / ( float )Screen.Instance.Height * 2, 0.0f );
+                DelaunayIncremental();
+            }
         }
 
-        public override void Update()
+        public override void OnMouseUp( MouseEvent e )
         {
-
+           
+            if ( IsDragging )
+            {
+                IsDragging = false;
+            }
         }
 
         public override void OnMouseDown( MouseEvent e )
         {
+            if ( e.mouse_.leftbutton )
+            {
+                bool founded = false;
+                for ( int i = 0; i < Points.Count && founded==false; i++ )
+                {
+                    if((Points[i].transform_.position_ - new Vector3(e.mouse_.x / ( float )Screen.Instance.Width * 2 - 1.0f,
+                    1.0f - e.mouse_.y / ( float )Screen.Instance.Height * 2, 0.0f )).Length() < 0.01f )
+                    {
+                        IsDragging = true;
+                        pointDragged = Points[i];
+                        founded = true;
+
+                    }
+                }
+            }
+
             if ( e.mouse_.rightbutton )
             {
                 AddPoint( e.mouse_.x / ( float )Screen.Instance.Width * 2 - 1.0f,
@@ -389,6 +481,19 @@ namespace DelaunayTriangularisation
             }
         }
 
+        public override void OnKeyDown( KeyboardEvent e )
+        {
+            if ( e.keycode_ == KeyCode.Key_1 )
+            {
+                DisplayCenters = !DisplayCenters;
+                DelaunayIncremental();
+            }
+            if ( e.keycode_ == KeyCode.Key_2 )
+            {
+                DisplayVoronoi = !DisplayVoronoi;
+                DelaunayIncremental();
+            }
+        }
         public void AddCircleCenter( float x, float y, float radius )
         {
             Troll3D.Entity entityCircle = new Troll3D.Entity( Entity );
@@ -399,7 +504,7 @@ namespace DelaunayTriangularisation
 
 
             lineRenderer.material_ = new MaterialDX11( "vDefault.cso", "pUnlit.cso", "gDefaultLine.cso" );
-            lineRenderer.material_.SetMainColor( 0.0f, 1.0f, 1.0f, 1.0f );
+            lineRenderer.material_.SetMainColor( 0.0f, 1.0f, 0.0f, 1.0f );
 
             lineRenderer.Vertices = Circle.GetLines( 30 );
             lineRenderer.UpdateRenderer();
@@ -413,7 +518,7 @@ namespace DelaunayTriangularisation
                 y, 
                 0.0f );
 
-            entity.transform_.SetScale( 0.09f, 0.09f, 1.0f );
+            entity.transform_.SetScale( 0.02f, 0.02f, 1.0f );
 
             MaterialDX11 material = new MaterialDX11();
             material.SetMainColor( 0.0f, 1.0f, 0.0f, 1.0f );
@@ -436,7 +541,7 @@ namespace DelaunayTriangularisation
             entity.transform_.SetScale( 0.02f, 0.02f, 1.0f );
 
             MaterialDX11 material = new MaterialDX11();
-            material.SetMainColor( 0.0f, 0.0f, 0.0f, 1.0f );
+            material.SetMainColor( 1.0f, 0.0f, 1.0f, 1.0f );
             MeshRenderer meshrenderer = entity.AddComponent<MeshRenderer>();
             meshrenderer.material_ = material;
             meshrenderer.model_ = Quad.GetMesh();
@@ -455,5 +560,8 @@ namespace DelaunayTriangularisation
         /// </summary>
         public int PointCount{get;private set;}
         public bool m_start = false;
+
+        public bool DisplayVoronoi=false;
+        public bool DisplayCenters = false;
     }
 }

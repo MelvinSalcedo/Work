@@ -35,7 +35,7 @@ namespace Troll3D
         /// la mise en place d'une éventuelle application
         /// </summary>
         public static string DebugPath = "D:\\Work\\Resources\\Shaders\\";
-        public static string ReleasePath = "./";
+        public static string ReleasePath = "D:\\Work\\Resources\\Shaders\\";
 
         public MaterialDX11( string vs = "vDefault.cso", string ps = "pUnlit.cso", string gs = "gDefault.cso", VertexTypeD11 type = VertexTypeD11.STANDARD_VERTEX )
         {

@@ -34,31 +34,34 @@ namespace Troll3D.Components
 
         public void Render()
         {
-            ApplicationDX11.Instance.devicecontext_.InputAssembler.PrimitiveTopology = PrimitiveTopology.LineList;
+            if ( Display )
+            {
+                ApplicationDX11.Instance.devicecontext_.InputAssembler.PrimitiveTopology = PrimitiveTopology.LineList;
 
-            ApplicationDX11.Instance.devicecontext_.Rasterizer.State = State;
+                ApplicationDX11.Instance.devicecontext_.Rasterizer.State = State;
 
-            m_transform.SendConstantBuffer();
-            LightManager.Instance.SendLights();
+                m_transform.SendConstantBuffer();
+                LightManager.Instance.SendLights();
 
-            material_.Begin();
+                material_.Begin();
 
-            ApplicationDX11.Instance.devicecontext_.InputAssembler.SetVertexBuffers(
-                0,
-                new VertexBufferBinding( m_Vertexbuffer, VertexSize(),
-                0 ) );
+                ApplicationDX11.Instance.devicecontext_.InputAssembler.SetVertexBuffers(
+                    0,
+                    new VertexBufferBinding( m_Vertexbuffer, VertexSize(),
+                    0 ) );
 
-            //ApplicationDX11.Instance.devicecontext_.InputAssembler.SetIndexBuffer(
-            //    m_IndexBuffer,
-            //    SharpDX.DXGI.Format.R32_UInt,
-            //    0 );
-            ApplicationDX11.Instance.devicecontext_.InputAssembler.PrimitiveTopology = PrimitiveTopology.LineList;
+                //ApplicationDX11.Instance.devicecontext_.InputAssembler.SetIndexBuffer(
+                //    m_IndexBuffer,
+                //    SharpDX.DXGI.Format.R32_UInt,
+                //    0 );
+                ApplicationDX11.Instance.devicecontext_.InputAssembler.PrimitiveTopology = PrimitiveTopology.LineList;
 
-            ApplicationDX11.Instance.devicecontext_.Draw( Vertices.Count, 0 );
+                ApplicationDX11.Instance.devicecontext_.Draw( Vertices.Count, 0 );
 
-            //ApplicationDX11.Instance.DrawIndexed( LineIndexes.Count,0, 0);
+                //ApplicationDX11.Instance.DrawIndexed( LineIndexes.Count,0, 0);
 
-            material_.End();
+                material_.End();
+            }
         }
 
         /// <summary> 
@@ -136,5 +139,6 @@ namespace Troll3D.Components
         public RasterizerState rasterstate_;
         public MaterialDX11 material_;
         public Mesh model_;
+        public bool Display=true;
     }
 }
