@@ -67,24 +67,30 @@ namespace DelaunayTriangularisation.WingedEdge
         /// <returns></returns>
         public List<FaceWE> GetFaceNeighbours( FaceWE f )
         {
+            List<FaceWE> faces = new List<FaceWE>();
 
-        }
-
-        /// <summary>
-        /// Connecte les sommets passés en paramètre à condition qu'ils existent à l'intérieur de la
-        /// structure
-        /// </summary>
-        public void AddEdge( VertexWE v1, VertexWE v2 )
-        {
-            if ( Vertices.Contains( v1 ) && Vertices.Contains( v2 ) )
+            for ( int i = 0; i < f.Edges.Count; i++ )
             {
-                EdgeWE e = EdgeAlreadyExist( v1, v2 ) ; 
-                if ( e==null)
+                if ( f.Edges[i].LeftFace != null && f.Edges[i].LeftFace != f )
                 {
-                    EdgeWE edge = new EdgeWE( v1, v2 );
+                    if (! faces.Contains( f.Edges[i].LeftFace ) )
+                    {
+                        faces.Add( f.Edges[i].LeftFace );
+                    }
+                }
+                if ( f.Edges[i].RightFace != null && f.Edges[i].RightFace != f )
+                {
+                    if ( !faces.Contains( f.Edges[i].RightFace ) )
+                    {
+                        faces.Add( f.Edges[i].RightFace );
+                    }
                 }
             }
+
+            return faces;
         }
+
+
         /// <summary>
         /// Ajoute une nouvelle face à la structure à partir des sommets spécifiés
         /// </summary>
@@ -121,7 +127,14 @@ namespace DelaunayTriangularisation.WingedEdge
                 }
                 else
                 {
-                    e1.RightFace = f;
+                    if ( e1.LeftFace == null )
+                    {
+                        e1.LeftFace = f;
+                    }
+                    else
+                    {
+                        e1.RightFace= f;
+                    }
                 }
 
                 if ( e2 == null )
@@ -132,53 +145,68 @@ namespace DelaunayTriangularisation.WingedEdge
                 }
                 else
                 {
-                    e2.RightFace = f;
+                    if ( e2.LeftFace == null )
+                    {
+                        e2.LeftFace = f;
+                    }
+                    else
+                    {
+                        e2.RightFace = f;
+                    }
                 }
 
                 if ( e3 == null )
                 {
                     e3 = new EdgeWE( v3, v1 );
-                    e3.LeftFace = f; Edges.Add( e3 );
+                    e3.LeftFace = f; 
+                    Edges.Add( e3 );
                 }
                 else
                 {
-                    e3.RightFace = f;
+                    if ( e3.LeftFace == null )
+                    {
+                        e3.LeftFace = f;
+                    }
+                    else
+                    {
+                        e3.RightFace = f;
+                    }
                 }
 
                 // On se charge ensuite de connecter les arrêtes entre elles
 
-                if ( e1.RightFace == null )
-                {
-                    e1.NextLeft = e2;
-                    e1.PreviousLeft = e3; 
-                }
-                else
-                {
-                    e1.NextRight    = e2;
-                    e1.PreviousRight= e3;
-                }
+                //if ( e1.RightFace == null )
+                //{
+                //    e1.NextLeft = e2;
+                //    e1.PreviousLeft = e3; 
+                //}
+                //else
+                //{
+                //    e1.NextRight    = e2;
+                //    e1.PreviousRight= e3;
+                //}
 
-                if ( e2.RightFace == null )
-                {
-                    e2.NextLeft     = e3;
-                    e2.PreviousLeft = e1; 
-                }
-                else
-                {
-                    e2.NextRight        = e3;
-                    e2.PreviousRight    = e1;
-                }
+                //if ( e2.RightFace == null )
+                //{
+                //    e2.NextLeft     = e3;
+                //    e2.PreviousLeft = e1; 
+                //}
+                //else
+                //{
+                //    e2.NextRight        = e3;
+                //    e2.PreviousRight    = e1;
+                //}
 
-                if ( e3.RightFace == null )
-                {
-                    e3.NextLeft     = e1;
-                    e3.PreviousLeft = e2;
-                }
-                else
-                {
-                    e3.NextRight        = e1;
-                    e3.PreviousRight    = e2;
-                }
+                //if ( e3.RightFace == null )
+                //{
+                //    e3.NextLeft     = e1;
+                //    e3.PreviousLeft = e2;
+                //}
+                //else
+                //{
+                //    e3.NextRight        = e1;
+                //    e3.PreviousRight    = e2;
+                //}
                
                 f.Edges.Add( e1 );
                 f.Edges.Add( e2 );
@@ -307,6 +335,7 @@ namespace DelaunayTriangularisation.WingedEdge
                 {
                     e.RightFace = null;
                 }
+
                 if ( e.LeftFace == f )
                 {
                     e.LeftFace = null;
@@ -336,6 +365,7 @@ namespace DelaunayTriangularisation.WingedEdge
             {
                 VertexWE v1 = f.Edges[i].Vertex1;
                 VertexWE v2 = f.Edges[i].Vertex2;
+
                 if ( f.Edges[i].LeftFace == f )
                 {
                     v1 = f.Edges[i].Vertex2;
@@ -364,7 +394,8 @@ namespace DelaunayTriangularisation.WingedEdge
         {
             foreach ( EdgeWE edge in Edges )
             {
-                if((edge.Vertex1 == v1 && edge.Vertex2 == v2 )||(edge.Vertex1==v2 && edge.Vertex2==v1)){
+                if((edge.Vertex1 == v1 && edge.Vertex2 == v2 )||(edge.Vertex1==v2 && edge.Vertex2==v1))
+                {
                     return edge;
                 }
             }
