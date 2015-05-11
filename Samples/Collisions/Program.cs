@@ -12,7 +12,6 @@ using Troll3D.Components.Collisions;
 
 namespace Collisions 
 {
-
     static class Program 
     {
         /// <summary>
@@ -35,10 +34,15 @@ namespace Collisions
             MeshRenderer mr =  entity.AddComponent<MeshRenderer>();
             mr.material_    = new MaterialDX11( "vDefault.cso", "pDiffuse.cso","gDefault.cso" );
             mr.model_       = Cube.GetMesh();
+            mr.material_.SetMainColor( 0.0F, 1.0f, 0.0f, 1.0f );
             entity.AddComponent<FirstCube>();
 
 
             Entity entity2 = new Entity();
+            // Petit fix de mon soucis actuel, lors de la première frame, la transformation de
+            // l'entité n'est pas mise à jour et la boite de collision se croit donc en (0,0,0)
+            entity2.transform_.Translate( 3.0f, 0.0f, 0.0F );
+            entity2.transform_.Update();
             entity2.AddComponent<OBB>();
             MeshRenderer mr2 = entity2.AddComponent<MeshRenderer>();
             mr2.material_ = new MaterialDX11( "vDefault.cso", "pDiffuse.cso", "gDefault.cso" );
@@ -46,7 +50,6 @@ namespace Collisions
             mr2.material_.SetMainColor( 0.0f, 0.0F, 1.0f, 1.0f );
             
 
-            entity2.transform_.Translate( 3.0f, 0.0f, 0.0F );
 
             application.Run();
         }
