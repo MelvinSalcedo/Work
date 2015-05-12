@@ -34,6 +34,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoiseGeneration", "PerlinNo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurvesAndSurfaces", "Samples\CurvesAndSurfaces\CurvesAndSurfaces.csproj", "{75D7AE00-D527-4F90-8130-24E65FEBFF28}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LSystems", "Samples\LSystems\LSystems.csproj", "{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -210,6 +212,22 @@ Global
 		{75D7AE00-D527-4F90-8130-24E65FEBFF28}.Release|Win32.ActiveCfg = Release|Any CPU
 		{75D7AE00-D527-4F90-8130-24E65FEBFF28}.Release|x64.ActiveCfg = Release|Any CPU
 		{75D7AE00-D527-4F90-8130-24E65FEBFF28}.Release|x86.ActiveCfg = Release|Any CPU
+		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD}.Debug|x64.ActiveCfg = Debug|x64
+		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD}.Debug|x64.Build.0 = Debug|x64
+		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD}.Release|Win32.ActiveCfg = Release|Any CPU
+		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD}.Release|x64.ActiveCfg = Release|x64
+		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD}.Release|x64.Build.0 = Release|x64
+		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -223,5 +241,6 @@ Global
 		{F2A86E02-5D9A-4EFF-A4B3-DD722F517437} = {6395E191-5CBD-4D59-8112-D362A5EF5199}
 		{D519D508-EA83-45DB-BA0D-D9962451661F} = {6395E191-5CBD-4D59-8112-D362A5EF5199}
 		{75D7AE00-D527-4F90-8130-24E65FEBFF28} = {6395E191-5CBD-4D59-8112-D362A5EF5199}
+		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD} = {6395E191-5CBD-4D59-8112-D362A5EF5199}
 	EndGlobalSection
 EndGlobal

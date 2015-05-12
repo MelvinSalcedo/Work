@@ -44,6 +44,7 @@ namespace Collisions
             entity2.transform_.Translate( 3.0f, 0.0f, 0.0F );
             entity2.transform_.Update();
             entity2.AddComponent<OBB>();
+            entity2.AddComponent<PickableCube>();
             MeshRenderer mr2 = entity2.AddComponent<MeshRenderer>();
             mr2.material_ = new MaterialDX11( "vDefault.cso", "pDiffuse.cso", "gDefault.cso" );
             mr2.model_ = Cube.GetMesh();

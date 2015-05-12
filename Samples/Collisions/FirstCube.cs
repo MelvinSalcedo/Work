@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Troll3D.Components;
+using Troll3D;
+
 
 namespace Collisions
 {
@@ -24,6 +26,16 @@ namespace Collisions
             m_renderer.material_.SetMainColor( 0.0f, 0.0f, 1.0f, 1.0f );
         }
 
+        public override void OnMouseDown( Troll3D.MouseEvent e )
+        {
+            RaycastResult result = TRaycast.FireRayFromMouse();
+
+            if ( result.GetEntity() != null )
+            {
+                MeshRenderer mr = (MeshRenderer) result.GetEntity().GetComponent( ComponentType.MeshRenderer);
+                mr.material_.SetMainColor( 1.0f, 1.0f, 0.0f, 1.0F );
+            }
+        }
         public override void OnKeyDown( Troll3D.KeyboardEvent e )
         {
             float speed = 0.055f;

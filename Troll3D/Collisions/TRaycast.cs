@@ -7,16 +7,19 @@ using Troll3D.Components;
 namespace Troll3D
 {
 
-
-    // Raycast utilise compare un objet de type Ray ( ligne/demi droite ou segment) avec les différentes boundings forms en place et retourne le premier objet
-    // à être rentré en collision
+    /// <summary>
+    /// Compare un objet de type ray (qui représente un segment, une droite ou un demi droite) avec
+    /// les différents colliders présent dans la scène
+    /// </summary>
     public class TRaycast
     {
-
-        /// <summary> Récupère la position de la souris dans l'espace réel </summary>
+        /// <summary> 
+        /// Récupère la position de la souris dans l'espace réel
+        /// </summary>
         public static Vector3 GetWorldMousePosition()
         {
             // En premier lieu, on récupère la position de la souris sur l'écran
+
             Vector2 MousePosition = new Vector2( InputManager.Instance.mouseInformation.x, InputManager.Instance.mouseInformation.y );
 
             // Maintenant on va transformer ça en View space si possible
@@ -31,7 +34,6 @@ namespace Troll3D
             // Maintenant, on utilise la matrice de la caméra pour récupérer la position "réelle" du point
 
             Matrix lol = Camera.Main.GetProjection().Data * Camera.Main.m_transform.worldmatrix_;
-
 
             Vector4 transformed = Vector4.Transform( new Vector4( MousePosition, -1.0f, 1.0f ), lol );
             transformed.X = transformed.X / transformed.W;
@@ -56,7 +58,7 @@ namespace Troll3D
 
             // Maintenant, on utilise la matrice de la caméra pour récupérer la position "réelle" du point
 
-            Matrix lol = Camera.Main.m_transform.GetViewMatrix() * Camera.Main.GetProjection().Data;
+            Matrix lol = Camera.Main.m_transform.worldmatrix_ * Camera.Main.GetProjection().Data;
             lol.Invert();
 
             Vector4 transformed = Vector4.Transform( new Vector4( MousePosition, -1.0f, 1.0f ), lol );
@@ -118,84 +120,81 @@ namespace Troll3D
             return ( r + t <= 1 );
         }
 
+
         /// <summary>
         ///  Inspecte tout les triangles d'un mesh pour trouver le point d'intersection le plus proche (s'il existe)
         ///  Renvoie true si le rayon rentre en collision avec le mesh. On récupère le point d'intersection
         ///  à partir de dernier argument passé en référence
         /// </summary>
-        public static bool IntersectWithMesh( TrollRay ray, Entity entity, ref Vector3 intersectionPoint, ref Vector3 intersectionNormal )
+        public static bool IntersectWithMesh( TrollRay ray, Collider collider, ref Vector3 intersectionPoint, ref Vector3 intersectionNormal )
         {
-
             bool doesIntersect = false;
             bool isClosestPointSet = false;
 
             Vector3 ClosestIntersectionPoint = new Vector3( 0.0f, 0.0f, 0.0f );
 
-            if ( entity.GetComponent( Components.ComponentType.MeshRenderer ) != null )
+            Mesh mesh = collider.Mesh;
+
+            for ( int i = 0; i < mesh.Faces.Count; i++ )
             {
-                Mesh mesh = ( ( Components.MeshRenderer )entity.GetComponent( Components.ComponentType.MeshRenderer ) ).model_;
+                Vector3 posA = ( Vector3 )( Vector4.Transform( new Vector4( ( ( StandardVertex )( mesh.Vertices[mesh.Faces[i].Indexes[0]] ) ).Position, 1.0f ), collider.transform_.worldmatrix_ ) );
+                Vector3 posB = ( Vector3 )( Vector4.Transform( new Vector4( ( ( StandardVertex )( mesh.Vertices[mesh.Faces[i].Indexes[1]] ) ).Position, 1.0f ), collider.transform_.worldmatrix_ ) );
+                Vector3 posC = ( Vector3 )( Vector4.Transform( new Vector4( ( ( StandardVertex )( mesh.Vertices[mesh.Faces[i].Indexes[2]] ) ).Position, 1.0f ), collider.transform_.worldmatrix_ ) );
 
-                for ( int i = 0; i < mesh.Faces.Count; i++ )
+                // On recherche l'équation du plan du triangle, on a besoin de la normale pour se faire
+                // Rappel, équation du plan : ax+by+cz+d=0
+
+                Vector3 normal = Vector3.Normalize( Vector3.Cross( posB - posA, posC - posA ) );
+
+                float A = normal.X;
+                float B = normal.Y;
+                float C = normal.Z;
+
+                // à partir de la normale, on connait les composantes a,b et c de l'équation ax+by+cz+d=0 du plan
+                // On doit désormais trouver la composant D; Pour se faire, on sélectionne un point de notre plan pour 
+                // remplir x,y et c et trouver d
+
+                float D = -( posA.X * A + posA.Y * B + posA.Z * C );
+
+                // On calcule maintenant les composants de l'équation paramétrique de la droite 
+                // à partir de son vecteur directeur
+
+
+                float denom = ray.direction_.X * A + ray.direction_.Y * B + ray.direction_.Z * C;
+                // non  Colinarité
+                if ( denom != 0 )
                 {
+                    float t = -ray.start_.X * A - ray.start_.Y * B - ray.start_.Z * C - D;
+                    t = t / denom;
 
-                    Vector3 posA = ( Vector3 )( Vector4.Transform( new Vector4( ( ( StandardVertex )( mesh.Vertices[mesh.Faces[i].Indexes[0]] ) ).Position, 1.0f ), entity.transform_.worldmatrix_ ) );
-                    Vector3 posB = ( Vector3 )( Vector4.Transform( new Vector4( ( ( StandardVertex )( mesh.Vertices[mesh.Faces[i].Indexes[1]] ) ).Position, 1.0f ), entity.transform_.worldmatrix_ ) );
-                    Vector3 posC = ( Vector3 )( Vector4.Transform( new Vector4( ( ( StandardVertex )( mesh.Vertices[mesh.Faces[i].Indexes[2]] ) ).Position, 1.0f ), entity.transform_.worldmatrix_ ) );
+                    Vector3 P = new Vector3(
+                        ray.start_.X + t * ray.direction_.X,
+                        ray.start_.Y + t * ray.direction_.Y,
+                        ray.start_.Z + t * ray.direction_.Z
+                    );
 
-                    // On recherche l'équation du plan du triangle, on a besoin de la normale pour se faire
-                    // Rappel, équation du plan : ax+by+cz+d=0
-
-                    Vector3 normal = Vector3.Normalize( Vector3.Cross( posB - posA, posC - posA ) );
-
-                    float A = normal.X;
-                    float B = normal.Y;
-                    float C = normal.Z;
-
-                    // à partir de la normale, on connait les composantes a,b et c de l'équation ax+by+cz+d=0 du plan
-                    // On doit désormais trouver la composant D; Pour se faire, on sélectionne un point de notre plan pour 
-                    // remplir x,y et c et trouver d
-
-                    float D = -( posA.X * A + posA.Y * B + posA.Z * C );
-
-                    // On calcule maintenant les composants de l'équation paramétrique de la droite 
-                    // à partir de son vecteur directeur
-
-
-                    float denom = ray.direction_.X * A + ray.direction_.Y * B + ray.direction_.Z * C;
-                    // non  Colinarité
-                    if ( denom != 0 )
+                    bool returnval = PointInTriangle( posA, posB, posC, P );
+                    if ( returnval == true )
                     {
-                        float t = -ray.start_.X * A - ray.start_.Y * B - ray.start_.Z * C - D;
-                        t = t / denom;
-
-                        Vector3 P = new Vector3(
-                            ray.start_.X + t * ray.direction_.X,
-                            ray.start_.Y + t * ray.direction_.Y,
-                            ray.start_.Z + t * ray.direction_.Z
-                        );
-
-                        bool returnval = PointInTriangle( posA, posB, posC, P );
-                        if ( returnval == true )
+                        if ( !isClosestPointSet )
                         {
-                            if ( !isClosestPointSet )
+                            isClosestPointSet = true;
+                            ClosestIntersectionPoint = P;
+                            intersectionNormal = normal;
+                        }
+                        else
+                        {
+                            if ( ( P - ray.start_ ).Length() < ( ClosestIntersectionPoint - ray.start_ ).Length() )
                             {
-                                isClosestPointSet = true;
                                 ClosestIntersectionPoint = P;
                                 intersectionNormal = normal;
                             }
-                            else
-                            {
-                                if ( ( P - ray.start_ ).Length() < ( ClosestIntersectionPoint - ray.start_ ).Length() )
-                                {
-                                    ClosestIntersectionPoint = P;
-                                    intersectionNormal = normal;
-                                }
-                            }
-                            doesIntersect = true;
                         }
+                        doesIntersect = true;
                     }
                 }
             }
+            
             intersectionPoint = ClosestIntersectionPoint;
             return doesIntersect;
         }

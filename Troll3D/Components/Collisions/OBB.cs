@@ -8,7 +8,7 @@ using SharpDX;
 namespace Troll3D.Components.Collisions
 {
     /// <summary>
-    /// Représente une boite de collision englobante. Probablement une Oriented bouding box
+    /// Représente une boite de collision englobante de type Oriented bouding box
     /// </summary>
     public class OBB : Collider
     {
@@ -25,6 +25,8 @@ namespace Troll3D.Components.Collisions
 
         public void Init( float width, float height, float depth )
         {
+            Mesh = Cube.GetMesh();
+
             transform_ = new Transform();
 
             transform_.parent = ( Transform )Entity.GetComponent( ComponentType.Transform );
@@ -101,5 +103,7 @@ namespace Troll3D.Components.Collisions
         public Vector3 max_;
 
         public Shape shape_;
+
+        
     }
 }

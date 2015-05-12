@@ -44,5 +44,9 @@ namespace Troll3D.Components
         public bool             IsActive;
         public Entity Link { get; private set; }
         public Transform transform_;
+
+        public Mesh Mesh { get; protected set; }
+
     }
+
 }
