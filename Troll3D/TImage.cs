@@ -79,9 +79,9 @@ namespace Troll3D
 
             DataRectangle rec = new DataRectangle( stre.DataPointer, Width * 4 * 4 );
 
-            Texture2D texture2D = new Texture2D( ApplicationDX11.Instance.device_, description, rec );
+            Texture2D texture2D = new Texture2D( ApplicationDX11.Instance.Device, description, rec );
 
-            texture2D.FilterTexture( ApplicationDX11.Instance.devicecontext_, 0, FilterFlags.Mirror );
+            texture2D.FilterTexture( ApplicationDX11.Instance.DeviceContext, 0, FilterFlags.Mirror );
 
             Resource res = new Resource( texture2D.NativePointer );
             return res;

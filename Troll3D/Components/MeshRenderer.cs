@@ -18,9 +18,9 @@ namespace Troll3D.Components
             Type = ComponentType.MeshRenderer;
 
             mode = FillMode.Solid;
-            RasterizerStateDescription rasterDescription = ApplicationDX11.Instance.devicecontext_.Rasterizer.State.Description;
+            RasterizerStateDescription rasterDescription = ApplicationDX11.Instance.DeviceContext.Rasterizer.State.Description;
             rasterDescription.FillMode = mode;
-            State = new RasterizerState( ApplicationDX11.Instance.device_, rasterDescription );
+            State = new RasterizerState( ApplicationDX11.Instance.Device, rasterDescription );
         }
 
         public MeshRenderer( MaterialDX11 material, Mesh model )
@@ -31,44 +31,50 @@ namespace Troll3D.Components
 
             mode        = FillMode.Solid;
 
-            RasterizerStateDescription rasterDescription = ApplicationDX11.Instance.devicecontext_.Rasterizer.State.Description;
+            RasterizerStateDescription rasterDescription = ApplicationDX11.Instance.DeviceContext.Rasterizer.State.Description;
             rasterDescription.FillMode = mode;
-            State = new RasterizerState( ApplicationDX11.Instance.device_, rasterDescription );
+            State = new RasterizerState( ApplicationDX11.Instance.Device, rasterDescription );
         }
 
         public override void Attach( Entity entity )
         {
-            m_transform = entity.transform_;
+            Transform = entity.transform_;
             Scene.CurrentScene.Renderables.Add( this );
         }
+
 
         public void SetFillMode( FillMode fillmode )
         {
             mode = fillmode;
-            RasterizerStateDescription rasterDescription = ApplicationDX11.Instance.devicecontext_.Rasterizer.State.Description;
+            RasterizerStateDescription rasterDescription = ApplicationDX11.Instance.DeviceContext.Rasterizer.State.Description;
             rasterDescription.FillMode = mode;
-            State = new RasterizerState( ApplicationDX11.Instance.device_, rasterDescription );
+            State = new RasterizerState( ApplicationDX11.Instance.Device, rasterDescription );
         }
 
         public override void Update() { }
 
         public void Render()
         {
-            ApplicationDX11.Instance.devicecontext_.Rasterizer.State = State;
+            ApplicationDX11.Instance.DeviceContext.Rasterizer.State = State;
 
-            m_transform.SendConstantBuffer();
+            // On envoie les informations de transformation
+            Transform.SendConstantBuffer();
+            // On envoie les informations portant sur la lumière
             LightManager.Instance.SendLights();
 
+            // On envoie les informations de material / effet
             material_.Begin();
             if ( model_ != null )
             {
+                // On affiche le modèle
                 model_.Render();
             }
             
             material_.End();
         }
 
-        Transform m_transform;
+        public Transform Transform{get;set;}
+
         FillMode mode;
         RasterizerState State;
         public RasterizerState rasterstate_;

@@ -33,7 +33,7 @@ namespace Troll3D
                         totalpath = ReleasePath+ path;
                     #endif
 
-                    Initialize((Texture2D)Texture2D.FromFile(ApplicationDX11.Instance.device_, totalpath), offsetx,offsety);
+                    Initialize((Texture2D)Texture2D.FromFile(ApplicationDX11.Instance.Device, totalpath), offsetx,offsety);
                 }
 
                 public BitmapImage(Texture2D image, int offsetx=0, int offsety=0 ){

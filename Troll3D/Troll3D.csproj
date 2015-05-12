@@ -94,6 +94,7 @@
     <Compile Include="Components\Projections\FrustumProjection.cs" />
     <Compile Include="Components\Projections\OrthoProjection.cs" />
     <Compile Include="Components\Projections\Projection.cs" />
+    <Compile Include="Components\Skybox.cs" />
     <Compile Include="Components\TComponent.cs" />
     <Compile Include="Components\Text\FontQuad.cs" />
     <Compile Include="Components\Text\TButton.cs" />

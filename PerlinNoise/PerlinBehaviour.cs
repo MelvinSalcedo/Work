@@ -24,7 +24,7 @@ namespace NoiseGeneration
             m_renderer.material_    = new MaterialDX11();
 
             m_image = new TImage( Width, Height);
-            SamplerState state = new SamplerState( ApplicationDX11.Instance.device_, new SamplerStateDescription()
+            SamplerState state = new SamplerState( ApplicationDX11.Instance.Device, new SamplerStateDescription()
             {
                 AddressU = TextureAddressMode.Wrap,
                 AddressV = TextureAddressMode.Wrap,

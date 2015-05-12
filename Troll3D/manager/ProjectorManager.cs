@@ -44,8 +44,8 @@ namespace Troll3D
                             
                             description_.Projectors[projectorCount] = projectors_[i].projectorDesc;
                             
-                            ApplicationDX11.Instance.devicecontext_.VertexShader.SetShaderResource(10   +projectorCount,   projectors_[i].m_SRV);
-                            ApplicationDX11.Instance.devicecontext_.PixelShader.SetShaderResource(10 + projectorCount, projectors_[i].m_SRV);
+                            ApplicationDX11.Instance.DeviceContext.VertexShader.SetShaderResource(10   +projectorCount,   projectors_[i].m_SRV);
+                            ApplicationDX11.Instance.DeviceContext.PixelShader.SetShaderResource(10 + projectorCount, projectors_[i].m_SRV);
                             projectorCount++;
                         }
                     }
@@ -61,8 +61,8 @@ namespace Troll3D
                 /// </summary>
                 public void UnBind(){
                     for (int i = 10; i < 20; i++){
-                        ApplicationDX11.Instance.devicecontext_.VertexShader.SetShaderResource(i,null);
-                        ApplicationDX11.Instance.devicecontext_.PixelShader.SetShaderResource(i, null);
+                        ApplicationDX11.Instance.DeviceContext.VertexShader.SetShaderResource(i,null);
+                        ApplicationDX11.Instance.DeviceContext.PixelShader.SetShaderResource(i, null);
                     }
                 }
 

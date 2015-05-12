@@ -126,7 +126,7 @@ namespace Troll3D
 
                 //entity.modelrenderer_ = new MeshRenderer( mat, Quad.GetMesh() );
 
-                SamplerState state = new SamplerState( ApplicationDX11.Instance.device_, new SamplerStateDescription()
+                SamplerState state = new SamplerState( ApplicationDX11.Instance.Device, new SamplerStateDescription()
                 {
                     AddressU = TextureAddressMode.Wrap,
                     AddressV = TextureAddressMode.Wrap,

@@ -39,6 +39,8 @@ namespace Troll3D{
             mesh.UpdateMesh();
 
             return mesh;
-        }  
+        }
+
+
     }
 }

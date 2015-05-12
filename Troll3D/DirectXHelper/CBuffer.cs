@@ -39,7 +39,7 @@ namespace Troll3D {
                 /// <param name="data"></param>
                 public void UpdateStruct(T data) {
                     Marshal.StructureToPtr(data, m_DataStream.DataPointer, false);
-                    ApplicationDX11.Instance.devicecontext_.UpdateSubresource(
+                    ApplicationDX11.Instance.DeviceContext.UpdateSubresource(
                         new DataBox(m_DataStream.DataPointer, 0, 0),
                         m_Buffer);
                 }
@@ -48,9 +48,9 @@ namespace Troll3D {
                 /// Lié le constant Buffer au shader actuellement utilisé pour l'affichage
                 /// </summary>
                 public override void Send() {
-                    ApplicationDX11.Instance.devicecontext_.VertexShader.SetConstantBuffer( m_Index, m_Buffer);
-                    ApplicationDX11.Instance.devicecontext_.PixelShader.SetConstantBuffer(  m_Index, m_Buffer);
-                    ApplicationDX11.Instance.devicecontext_.GeometryShader.SetConstantBuffer(m_Index, m_Buffer);
+                    ApplicationDX11.Instance.DeviceContext.VertexShader.SetConstantBuffer( m_Index, m_Buffer);
+                    ApplicationDX11.Instance.DeviceContext.PixelShader.SetConstantBuffer(  m_Index, m_Buffer);
+                    ApplicationDX11.Instance.DeviceContext.GeometryShader.SetConstantBuffer(m_Index, m_Buffer);
                 }
 
                 /// <summary>
@@ -78,7 +78,7 @@ namespace Troll3D {
                     }
 
                     m_Buffer = new D3D11.Buffer(
-                        ApplicationDX11.Instance.device_,
+                        ApplicationDX11.Instance.Device,
                         Size(),
                         ResourceUsage.Default,
                         BindFlags.ConstantBuffer,

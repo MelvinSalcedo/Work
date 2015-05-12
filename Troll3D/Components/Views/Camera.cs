@@ -6,7 +6,9 @@ using SharpDX.Direct3D11;
 namespace Troll3D.Components
 {
 
-    /// <summary> Une caméra est uniquement utilisé pour rendre la scène depuis son point de vue </summary>
+    /// <summary> 
+    /// Une caméra est uniquement utilisé pour rendre la scène depuis son point de vue 
+    /// </summary>
     public class Camera : TComponent
     {
         /// <summary>
@@ -15,9 +17,14 @@ namespace Troll3D.Components
         /// </summary>
         public static Camera Main;
 
-        /// <summary> Enregistre les différentes caméras initialisé dans la scène </summary>
+        /// <summary> 
+        /// Enregistre les différentes caméras initialisé dans la scène 
+        /// </summary>
         public static List<Camera> Cameras = new List<Camera>();
 
+        /// <summary>
+        /// Construit un nouvel objet de type camera
+        /// </summary>
         public Camera()
         {
             Type = ComponentType.Camera;
@@ -27,7 +34,7 @@ namespace Troll3D.Components
         {
             Entity = entity;
             m_transform = entity.transform_;
-
+            m_transform.IsViewMatrix = true;
         }
 
         public void Initialize( Projection projection )
@@ -37,11 +44,12 @@ namespace Troll3D.Components
                 Main = this;
             }
 
-            m_View = new View( m_transform, projection );
+            m_View              = new View( m_transform, projection );
             m_StencilManager    = new StencilManager( Screen.Instance.Width, Screen.Instance.Height);
+            IsActive            = true;
+            HasRenderTexture    = false;
+
             Cameras.Add( this );
-            IsActive = true;
-            HasRenderTexture = false;
         }
 
         public override void Update()
@@ -127,5 +135,6 @@ namespace Troll3D.Components
         private View m_View;
         public Transform m_transform;
         public Entity Entity;
+        public Skybox Skybox;
     }
 }

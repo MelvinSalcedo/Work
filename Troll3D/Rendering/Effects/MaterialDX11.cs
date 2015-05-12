@@ -26,7 +26,7 @@ namespace Troll3D
 
         public static PixelShader LoadPixelShader( string filename )
         {
-            return new PixelShader( ApplicationDX11.Instance.device_, ShaderBytecode.FromFile( RealPath( filename ) ) );
+            return new PixelShader( ApplicationDX11.Instance.Device, ShaderBytecode.FromFile( RealPath( filename ) ) );
         }
 
         /// <summary>
@@ -58,22 +58,24 @@ namespace Troll3D
             m_MaterialCBufferDesc = new CBuffer<MaterialDesc>( 4, m_MaterialDesc );
         }
 
-        /// <summary>Lie les données du material (shaders, constant buffer et ShaderResourceView) au gpu </summary>
+        /// <summary>
+        /// Lie les données du material (shaders, constant buffer et ShaderResourceView) au gpu 
+        /// </summary>
         public void Begin()
         {
-            ApplicationDX11.Instance.devicecontext_.InputAssembler.InputLayout = inputlayout_;
+            ApplicationDX11.Instance.DeviceContext.InputAssembler.InputLayout = inputlayout_;
 
             if ( !ApplicationDX11.DesactivatePixelShader )
             {
-                ApplicationDX11.Instance.devicecontext_.PixelShader.Set( pixelshader_ );
+                ApplicationDX11.Instance.DeviceContext.PixelShader.Set( pixelshader_ );
             }
             else
             {
-                ApplicationDX11.Instance.devicecontext_.PixelShader.Set( null );
+                ApplicationDX11.Instance.DeviceContext.PixelShader.Set( null );
             }
-            ApplicationDX11.Instance.devicecontext_.VertexShader.Set( vertexshader_ );
+            ApplicationDX11.Instance.DeviceContext.VertexShader.Set( vertexshader_ );
 
-            ApplicationDX11.Instance.devicecontext_.GeometryShader.Set( geometryshader_ );
+            ApplicationDX11.Instance.DeviceContext.GeometryShader.Set( geometryshader_ );
             SendConstantBuffers();
             BindShaderResources();
             m_TextureConstantBuffer.Send();
@@ -104,18 +106,25 @@ namespace Troll3D
             ( ( CBuffer<T> )( constantBuffer ) ).UpdateStruct( data );
         }
 
+        public void AddTexture( string file )
+        {
+            m_TextureConstantBufferDesc.HasTexture = true;
+            textures_.Add( ShaderResourceView.FromFile(ApplicationDX11.Instance.Device,file));
+            
+            m_TextureConstantBuffer.UpdateStruct( m_TextureConstantBufferDesc );
+        }
         public void AddTexture( Resource resource )
         {
             m_TextureConstantBufferDesc.HasTexture = true;
             // A priori le shaderResourceView correspond vraiment uniquement aux "textures"
-            textures_.Add( new ShaderResourceView( ApplicationDX11.Instance.device_, resource ) );
+            textures_.Add( new ShaderResourceView( ApplicationDX11.Instance.Device, resource) );
 
             m_TextureConstantBuffer.UpdateStruct( m_TextureConstantBufferDesc );
         }
 
         public void SetTexture( int index, Resource resource )
         {
-            textures_[index] = new ShaderResourceView( ApplicationDX11.Instance.device_, resource );
+            textures_[index] = new ShaderResourceView( ApplicationDX11.Instance.Device, resource );
         }
 
         public void AddShaderResourceView( ShaderResourceView shaderResourceView )
@@ -132,7 +141,7 @@ namespace Troll3D
 
         public void SetPixelShader( string pixelname )
         {
-            SetPixelShader( new PixelShader( ApplicationDX11.Instance.device_, ShaderBytecode.FromFile( RealPath( pixelname ) ) ) );
+            SetPixelShader( new PixelShader( ApplicationDX11.Instance.Device, ShaderBytecode.FromFile( RealPath( pixelname ) ) ) );
         }
 
         public void SetPixelShader( PixelShader pixelShader )
@@ -184,7 +193,10 @@ namespace Troll3D
             }
         }
 
-        /// <summary> Charge et combine un vertex et fragment Shader précompilé dont le chemin est passé en paramètre </summary>
+        /// <summary> 
+        /// Charge et combine un vertex et fragment Shader précompilé dont le chemin
+        /// est passé en paramètre 
+        /// </summary>
         private void LoadShaders( string vs = "vDefault.cso", string fs = "pDiffuse.cso", string gs = "gDefault.cso" )
         {
             LoadVertexShaderFromFile( vs );
@@ -192,19 +204,25 @@ namespace Troll3D
             LoadGeometryShaderFromFile( gs );
         }
 
-        /// <summary> Récupère le Vertex Shader précompilé </summary>
+        /// <summary>
+        /// Récupère le Vertex Shader précompilé
+        /// </summary>
         private void LoadVertexShaderFromFile( string file )
         {
             InitializeVertexShader( ShaderBytecode.FromFile( RealPath( file ) ) );
         }
 
-        /// <summary> Récupère et Initialise le Geometry Shader précompilé </summary>
+        /// <summary>
+        /// Récupère et Initialise le Geometry Shader précompilé 
+        /// </summary>
         private void LoadGeometryShaderFromFile( string file )
         {
             InitializeGeometryShader( ShaderBytecode.FromFile( RealPath( file ) ) );
         }
 
-        /// <summary> Récupère le PixelShader précompilé </summary>
+        /// <summary> 
+        /// Récupère le PixelShader précompilé 
+        /// </summary>
         private void LoadPixelShaderFromFile( string file )
         {
             InitializePixelShader( ShaderBytecode.FromFile( RealPath( file ) ) );
@@ -213,53 +231,56 @@ namespace Troll3D
         private void SetInputLayout( VertexTypeD11 type )
         {
             inputlayout_ = new InputLayout(
-                ApplicationDX11.Instance.device_,
+                ApplicationDX11.Instance.Device,
                 vertexsignature_,
                 AbstractVertex.Infos( type )
                 );
         }
 
-        /// <summary> Lie les resources ( textures) au shader </summary>
+        /// <summary> 
+        /// Lie les resources ( textures) au shader 
+        /// </summary>
         private void BindShaderResources()
         {
             for ( int i = 0; i < textures_.Count; i++ )
             {
-                ApplicationDX11.Instance.devicecontext_.VertexShader.SetShaderResource( i, textures_[i] );
-                ApplicationDX11.Instance.devicecontext_.PixelShader.SetShaderResource( i, textures_[i] );
+                ApplicationDX11.Instance.DeviceContext.VertexShader.SetShaderResource( i, textures_[i] );
+                ApplicationDX11.Instance.DeviceContext.PixelShader.SetShaderResource( i, textures_[i] );
             }
             for ( int i = 0; i < samplers.Count; i++ )
             {
-                ApplicationDX11.Instance.devicecontext_.PixelShader.SetSampler( i, samplers[i] );
+                ApplicationDX11.Instance.DeviceContext.PixelShader.SetSampler( i, samplers[i] );
             }
         }
 
-        /// <summary>On remet les ShaderResourceView que l'on vient d'utiliser à null
+        /// <summary>
+        /// On remet les ShaderResourceView que l'on vient d'utiliser à null
         ///  de manière à éviter qu'une texture "déborde" sur un autre material
         /// </summary>
         private void UnBindShaderResources()
         {
             for ( int i = 0; i < textures_.Count; i++ )
             {
-                ApplicationDX11.Instance.devicecontext_.VertexShader.SetShaderResource( i, null );
-                ApplicationDX11.Instance.devicecontext_.PixelShader.SetShaderResource( i, null );
+                ApplicationDX11.Instance.DeviceContext.VertexShader.SetShaderResource( i, null );
+                ApplicationDX11.Instance.DeviceContext.PixelShader.SetShaderResource( i, null );
             }
         }
 
         private void InitializeVertexShader( ShaderBytecode sbc )
         {
-            vertexshader_ = new VertexShader( ApplicationDX11.Instance.device_, sbc );
+            vertexshader_ = new VertexShader( ApplicationDX11.Instance.Device, sbc );
             GetSignatureAndReflection( sbc, ref vertexsignature_, ref vertexreflection_ );
         }
 
         private void InitializePixelShader( ShaderBytecode sbc )
         {
-            pixelshader_ = new PixelShader( ApplicationDX11.Instance.device_, sbc );
+            pixelshader_ = new PixelShader( ApplicationDX11.Instance.Device, sbc );
             GetSignatureAndReflection( sbc, ref pixelsignature_, ref pixelreflection_ );
         }
 
         private void InitializeGeometryShader( ShaderBytecode sbc )
         {
-            geometryshader_ = new GeometryShader( ApplicationDX11.Instance.device_, sbc );
+            geometryshader_ = new GeometryShader( ApplicationDX11.Instance.Device, sbc );
             GetSignatureAndReflection( sbc, ref geometrysignature_, ref geometryreflection_ );
         }
 

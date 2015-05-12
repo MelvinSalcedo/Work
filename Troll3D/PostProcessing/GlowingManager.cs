@@ -92,7 +92,7 @@ namespace Troll3D{
 
                     blendStateDesc2.RenderTarget[0] = renderdesc;
 
-                    glowingBlending = new BlendState(ApplicationDX11.Instance.device_, blendStateDesc2);
+                    glowingBlending = new BlendState(ApplicationDX11.Instance.Device, blendStateDesc2);
                 }
 
             // Methods
@@ -104,10 +104,10 @@ namespace Troll3D{
                 public void GlowingPass(Scene scene){
 
                     // On commence par rendre l'intégralité de la scène dans une texture
-                    ApplicationDX11.Instance.devicecontext_.OutputMerger.BlendState = ApplicationDX11.Instance.RenderToTextureBlendState;
+                    ApplicationDX11.Instance.DeviceContext.OutputMerger.BlendState = ApplicationDX11.Instance.RenderToTextureBlendState;
 
                     m_RenderTexture.BeginRender();
-                    ApplicationDX11.Instance.devicecontext_.ClearRenderTargetView(
+                    ApplicationDX11.Instance.DeviceContext.ClearRenderTargetView(
                         m_RenderTexture.GetRenderTargetView(),
                         new Color4(0.0f, 0.0f, 0.0f, 0.0f));
                
@@ -194,7 +194,7 @@ namespace Troll3D{
                 /// <param name="source"></param>
                 public void DrawQuadOnTop(){
 
-                    ApplicationDX11.Instance.devicecontext_.OutputMerger.BlendState = glowingBlending;
+                    ApplicationDX11.Instance.DeviceContext.OutputMerger.BlendState = glowingBlending;
                     View.Current = PostProcessingView;
 
                  

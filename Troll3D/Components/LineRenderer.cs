@@ -19,9 +19,9 @@ namespace Troll3D.Components
             Type = ComponentType.LineRenderer;
 
             mode = FillMode.Solid;
-            RasterizerStateDescription rasterDescription = ApplicationDX11.Instance.devicecontext_.Rasterizer.State.Description;
+            RasterizerStateDescription rasterDescription = ApplicationDX11.Instance.DeviceContext.Rasterizer.State.Description;
             rasterDescription.FillMode = mode;
-            State = new RasterizerState( ApplicationDX11.Instance.device_, rasterDescription );
+            State = new RasterizerState( ApplicationDX11.Instance.Device, rasterDescription );
         }
 
         public override void Update(){}
@@ -36,16 +36,16 @@ namespace Troll3D.Components
         {
             if ( Display )
             {
-                ApplicationDX11.Instance.devicecontext_.InputAssembler.PrimitiveTopology = PrimitiveTopology.LineList;
+                ApplicationDX11.Instance.DeviceContext.InputAssembler.PrimitiveTopology = PrimitiveTopology.LineList;
 
-                ApplicationDX11.Instance.devicecontext_.Rasterizer.State = State;
+                ApplicationDX11.Instance.DeviceContext.Rasterizer.State = State;
 
                 m_transform.SendConstantBuffer();
                 LightManager.Instance.SendLights();
 
                 material_.Begin();
 
-                ApplicationDX11.Instance.devicecontext_.InputAssembler.SetVertexBuffers(
+                ApplicationDX11.Instance.DeviceContext.InputAssembler.SetVertexBuffers(
                     0,
                     new VertexBufferBinding( m_Vertexbuffer, VertexSize(),
                     0 ) );
@@ -54,9 +54,9 @@ namespace Troll3D.Components
                 //    m_IndexBuffer,
                 //    SharpDX.DXGI.Format.R32_UInt,
                 //    0 );
-                ApplicationDX11.Instance.devicecontext_.InputAssembler.PrimitiveTopology = PrimitiveTopology.LineList;
+                ApplicationDX11.Instance.DeviceContext.InputAssembler.PrimitiveTopology = PrimitiveTopology.LineList;
 
-                ApplicationDX11.Instance.devicecontext_.Draw( Vertices.Count, 0 );
+                ApplicationDX11.Instance.DeviceContext.Draw( Vertices.Count, 0 );
 
                 //ApplicationDX11.Instance.DrawIndexed( LineIndexes.Count,0, 0);
 
@@ -93,7 +93,7 @@ namespace Troll3D.Components
                 SharpDX.Utilities.Dispose<SharpDX.Direct3D11.Buffer>( ref m_Vertexbuffer );
             }
 
-            m_Vertexbuffer = SharpDX.Direct3D11.Buffer.Create( ApplicationDX11.Instance.device_,
+            m_Vertexbuffer = SharpDX.Direct3D11.Buffer.Create( ApplicationDX11.Instance.Device,
                 BindFlags.VertexBuffer,
                 GetVerticesArray()
                 );
@@ -106,7 +106,7 @@ namespace Troll3D.Components
                 SharpDX.Utilities.Dispose<SharpDX.Direct3D11.Buffer>( ref m_IndexBuffer );
             }
 
-            m_IndexBuffer = SharpDX.Direct3D11.Buffer.Create( ApplicationDX11.Instance.device_,
+            m_IndexBuffer = SharpDX.Direct3D11.Buffer.Create( ApplicationDX11.Instance.Device,
                 BindFlags.IndexBuffer,
                 LineIndexes.ToArray() );
         }

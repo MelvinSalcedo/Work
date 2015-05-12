@@ -42,7 +42,7 @@ namespace Troll3D
             InitializeTileMapTexture();
 
             // Ne pas oublier d'utiliser un sampler "pixel perfect" pour la tilemap
-            SamplerState state = new SamplerState( ApplicationDX11.Instance.device_, new SamplerStateDescription()
+            SamplerState state = new SamplerState( ApplicationDX11.Instance.Device, new SamplerStateDescription()
             {
                 AddressU = TextureAddressMode.Wrap,
                 AddressV = TextureAddressMode.Wrap,

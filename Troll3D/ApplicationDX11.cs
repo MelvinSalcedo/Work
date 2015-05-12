@@ -20,17 +20,8 @@ namespace Troll3D
 {
     public class ApplicationDX11
     {
-        public static DeviceContext DeviceContext()
-        {
-            return Instance.devicecontext_;
-        }
-
-        public static D3D11.Device Device()
-        {
-            return Instance.device_;
-        }
-
         public static ApplicationDX11 Instance;
+
         public bool Isglowing;
         public static bool DesactivatePixelShader = false;
 
@@ -41,8 +32,9 @@ namespace Troll3D
         public ImageProcessing imageProcessing;
         public RenderTexture renderTex;
 
-
-        /// <summary>Crée une application dans le handle défini </summary>
+        /// <summary>
+        /// Crée une application dans le handle défini 
+        /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
         public ApplicationDX11( int width, int height, IntPtr handle )
@@ -56,8 +48,8 @@ namespace Troll3D
         /// <summary>
         /// Si aucun Handle n'est défini dans les paramètres, l'application crée automatiquement un renderForm
         /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
+        /// <param name="width">Longueur de la fenêtre</param>
+        /// <param name="height">Hauteur de la fenêtre</param>
         public ApplicationDX11( int width, int height )
         {
             new Screen( width, height );
@@ -72,22 +64,22 @@ namespace Troll3D
         {
             // General Direct3D 11 stuff
             m_SwapChainHelper.Dispose();
-            device_.Dispose();
-            devicecontext_.Dispose();
+            Device.Dispose();
+            DeviceContext.Dispose();
             rendertargetview_.Dispose();
         }
 
 
         public void DrawIndexed( int indexCount, int startIndexLocation, int baseVertexLocation )
         {
-            devicecontext_.DrawIndexed( indexCount, startIndexLocation, baseVertexLocation );
+            DeviceContext.DrawIndexed( indexCount, startIndexLocation, baseVertexLocation );
             m_ApplicationInformation.AddDrawCall( 1 );
             m_ApplicationInformation.AddTriangles( indexCount / 3 );
         }
 
-        public void Draw(int vertexCount, int startVertexLocation)
+        public void Draw( int vertexCount, int startVertexLocation )
         {
-            devicecontext_.Draw( vertexCount, startVertexLocation );
+            DeviceContext.Draw( vertexCount, startVertexLocation );
         }
 
         public void Run()
@@ -117,13 +109,11 @@ namespace Troll3D
             imageProcessing.Resize( width, height, renderTex.GetSRV() );
         }
 
-        public bool turnOffSceneRendering = false;
 
         public void Update()
         {
             UpdateLogic();
             DrawScene();
-            DebugRenderer.Instance.Update();
         }
 
         private void UpdateLogic()
@@ -139,12 +129,12 @@ namespace Troll3D
 
         public void SetViewport( Troll3D.Viewport viewport )
         {
-            devicecontext_.Rasterizer.SetViewport( viewport.XOffset, viewport.YOffset, viewport.Width, viewport.Height );
+            DeviceContext.Rasterizer.SetViewport( viewport.XOffset, viewport.YOffset, viewport.Width, viewport.Height );
         }
 
         public void SetViewport( float xoffset, float yoffset, float width, float height )
         {
-            devicecontext_.Rasterizer.SetViewport( xoffset, yoffset, width, height );
+            DeviceContext.Rasterizer.SetViewport( xoffset, yoffset, width, height );
         }
 
         private void DrawScene()
@@ -190,8 +180,8 @@ namespace Troll3D
         {
 
             m_SwapChainHelper = new SwapChainHelper( handle );
-            device_ = m_SwapChainHelper.CreateDeviceWithSwapChain( DeviceCreationFlags.Debug );
-            devicecontext_ = device_.ImmediateContext;
+            Device = m_SwapChainHelper.CreateDeviceWithSwapChain( DeviceCreationFlags.Debug );
+            DeviceContext = Device.ImmediateContext;
 
             scene_ = new Scene( new Color4( 0.0f, 0.2f, 0.7f, 1.0f ) );
 
@@ -200,7 +190,7 @@ namespace Troll3D
 
             m_mainRenderTarget = new RenderTarget(
                 m_SwapChainHelper.GetRenderTargetView(),
-                devicecontext_,
+                DeviceContext,
                 Screen.Instance.Width,
                 Screen.Instance.Height
             );
@@ -210,7 +200,6 @@ namespace Troll3D
             new CollisionManager();
             new TimeHelper();
             new LayerManager();
-            
 
             // Initialisation de la transparence pour les RenderTexture
             RenderTargetBlendDescription renderdesc3 = new RenderTargetBlendDescription()
@@ -236,7 +225,7 @@ namespace Troll3D
 
             blendStateDesc3.RenderTarget[0] = renderdesc3;
 
-            LastRenderToTextureBlendState = new BlendState( device_, blendStateDesc3 );
+            LastRenderToTextureBlendState = new BlendState( Device, blendStateDesc3 );
             LastRenderToTextureBlendState = null;
 
             // Initialisation de la transparence pour les RenderTexture
@@ -265,7 +254,7 @@ namespace Troll3D
             blendStateDesc2.RenderTarget[0] = renderdesc;
 
 
-            RenderToTextureBlendState = new BlendState( device_, blendStateDesc2 );
+            RenderToTextureBlendState = new BlendState( Device, blendStateDesc2 );
             RenderToTextureBlendState = null;
             // Initialisation de la transparence
             RenderTargetBlendDescription desc = new RenderTargetBlendDescription()
@@ -295,25 +284,95 @@ namespace Troll3D
 
             blendStateDesc.RenderTarget[0] = desc;
 
-            mainBlend = new BlendState( device_, blendStateDesc );
+            mainBlend = new BlendState( Device, blendStateDesc );
 
-            devicecontext_.OutputMerger.BlendState = mainBlend;
+            DeviceContext.OutputMerger.BlendState = mainBlend;
             // Fin Transparence
 
             InitializeRasterState();
 
-            new GlowingManager( Screen.Instance.Width, Screen.Instance.Height);
+            new GlowingManager( Screen.Instance.Width, Screen.Instance.Height );
             m_ApplicationInformation = new ApplicationInformation();
 
-            renderTex = new RenderTexture( Screen.Instance.Width, Screen.Instance.Height);
+            renderTex = new RenderTexture( Screen.Instance.Width, Screen.Instance.Height );
             imageProcessing = new ImageProcessing( Screen.Instance.Width, Screen.Instance.Height, renderTex.GetSRV() );
 
             new InputManager( m_renderForm );
         }
 
-        private void DrawFromCamera( Camera camera, RenderTarget renderTarget)
+        private void DrawFromCamera( Camera camera, RenderTarget renderTarget )
         {
+            GlowingPass(camera);
+            ShadowMappingPass( camera );
 
+            camera.SetCurrentView();
+            SetViewport( camera.GetViewport() );
+
+            renderTarget.Clear();
+            renderTarget.Bind();
+
+            // On vérifie si la camera possède une skybox
+
+            if ( camera.Skybox != null )
+            {
+                // Dans ce cas, on affiche la skybox
+
+                camera.Skybox.Render();
+            }
+
+
+            LightManager.Instance.Update( View.Current );
+
+            if ( !turnOffSceneRendering )
+            {
+                //ProjectorManager.Instance.Bind();
+                scene_.Render();
+                //ProjectorManager.Instance.UnBind();
+            }
+            // if (Isglowing){
+            // GlowingManager.Instance.DrawQuadOnTop();
+            // }
+        }
+
+        /// <summary>
+        ///  Met à jour les RenderTexture
+        /// </summary>
+        private void UpdateRenderTexture()
+        {
+            for ( int i = 0; i < Camera.Cameras.Count; i++ )
+            {
+                if ( Camera.Cameras[i].HasRenderTexture )
+                {
+                    //DrawFromCamera( Camera.Cameras[i], Camera.Cameras[i].m_RenderTexture.GetRenderTargetView() );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Initialise le raster state
+        /// </summary>
+        private void InitializeRasterState()
+        {
+            RasterizerState rasterstate = new RasterizerState( Device, new RasterizerStateDescription()
+            {
+                FillMode = FillMode.Solid,
+                CullMode = CullMode.Back,
+                IsFrontCounterClockwise = false,
+                DepthBias = 0,
+                DepthBiasClamp = 0,
+                SlopeScaledDepthBias = 0,
+                IsDepthClipEnabled = true,
+                IsScissorEnabled = false,
+                IsMultisampleEnabled = false,
+                IsAntialiasedLineEnabled = false
+
+            } );
+            DeviceContext.Rasterizer.State = rasterstate;
+        }
+
+
+        private void GlowingPass( Camera camera )
+        {
             // GlowingPass
 
             //if (Isglowing){
@@ -323,7 +382,11 @@ namespace Troll3D
             //}
 
             // EndGlowinPass
+        }
 
+
+        private void ShadowMappingPass( Camera camera )
+        {
             // Shadow Pass
 
             ///DesactivatePixelShader = true;
@@ -349,56 +412,6 @@ namespace Troll3D
             // End Shadow Pass
 
             DesactivatePixelShader = false;
-
-            camera.SetCurrentView();
-            SetViewport( camera.GetViewport() );
-
-            renderTarget.Clear();
-            renderTarget.Bind();
-
-
-            LightManager.Instance.Update( View.Current );
-
-            if ( !turnOffSceneRendering )
-            {
-                //ProjectorManager.Instance.Bind();
-                scene_.Render();
-                //ProjectorManager.Instance.UnBind();
-            }
-            // if (Isglowing){
-            // GlowingManager.Instance.DrawQuadOnTop();
-            // }
-        }
-
-        private void UpdateRenderTexture()
-        {
-            for ( int i = 0; i < Camera.Cameras.Count; i++ )
-            {
-                if ( Camera.Cameras[i].HasRenderTexture )
-                {
-                    //DrawFromCamera( Camera.Cameras[i], Camera.Cameras[i].m_RenderTexture.GetRenderTargetView() );
-                }
-            }
-        }
-
-        private void InitializeRasterState()
-        {
-            RasterizerState rasterstate = new RasterizerState( device_, new RasterizerStateDescription()
-            {
-
-                FillMode = FillMode.Solid,
-                CullMode = CullMode.Back,
-                IsFrontCounterClockwise = false,
-                DepthBias = 0,
-                DepthBiasClamp = 0,
-                SlopeScaledDepthBias = 0,
-                IsDepthClipEnabled = true,
-                IsScissorEnabled = false,
-                IsMultisampleEnabled = false,
-                IsAntialiasedLineEnabled = false
-
-            } );
-            devicecontext_.Rasterizer.State = rasterstate;
         }
 
 
@@ -408,11 +421,13 @@ namespace Troll3D
         // continuer de charger des données (modèles, textures) dans device, pendant
         // que deviceContext se charge de l'affichage
 
-        public D3D11.Device device_;
+        /// <summary>
+        /// DeviceContext est utilisé pour dessiner les objets
+        /// </summary>
+        public DeviceContext DeviceContext { get; private set; }
+        public D3D11.Device Device { get; private set; }
 
-        // DeviceContext est utilisé pour dessiner les objets
-        public D3D11.DeviceContext devicecontext_;
-
+        public bool turnOffSceneRendering = false;
         public D3D11.RenderTargetView rendertargetview_;
         public Color4 backgroundColor;
         public RenderTarget m_mainRenderTarget;

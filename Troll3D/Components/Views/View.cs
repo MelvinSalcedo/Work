@@ -13,13 +13,16 @@ namespace Troll3D
     public class View
     {
 
-        /// <summary> Les objets de la classe Entity ont besoin de connaitre la matrice de transformation et la projection de la Vue en cours 
-        /// d'utilisation. Ils pourront piocher dans cette variable statique pour accomplir cet tâche
+        /// <summary> 
+        /// Les objets de la classe Entity ont besoin de connaitre la matrice de transformation et la
+        /// projection de la Vue en cours d'utilisation. 
+        /// Ils pourront piocher dans cette variable statique pour accomplir cet tâche
         /// </summary>
         public static View Current;
 
-        /// <summary> Si aucun argument n'est spécifié lors de la création de la vue, le viewport de cette dernière prendra
-        /// automatiquement les coordonnées de l'écran
+        /// <summary> 
+        /// Si aucun argument n'est spécifié lors de la création de la vue,
+        /// le viewport de cette dernière prendra automatiquement les coordonnées de l'écran
         /// </summary>
         public View( Transform transform, Projection projection )
         {
@@ -56,7 +59,8 @@ namespace Troll3D
             projection_ = new FrustumProjection( fov, aspect, near, far );
         }
 
-        /// <summary>Raccourcis pour retourner la projection directement sous la forme d'une orthoProjection
+        /// <summary>
+        /// Raccourcis pour retourner la projection directement sous la forme d'une orthoProjection
         /// Attention cependant, si la projection est de type FRustum/perspective, la fonction plantera le programme
         /// </summary>
         /// <returns></returns>
@@ -65,7 +69,8 @@ namespace Troll3D
             return ( OrthoProjection )projection_;
         }
 
-        /// <summary>Raccourcis pour retourner la projection directement sous la forme d'une FrustumProjection
+        /// <summary>
+        /// Raccourcis pour retourner la projection directement sous la forme d'une FrustumProjection
         /// Attention, si la projection est de type ortho, la fonction fera planter le programme
         /// </summary>
         /// <returns></returns>
@@ -84,21 +89,24 @@ namespace Troll3D
             return projection_;
         }
 
-        // Datas
-
-        /// <summary>Toujours important lorsque l'on souhaite rendre la vue </summary>
+        /// <summary>
+        /// Toujours important lorsque l'on souhaite rendre la vue 
+        /// </summary>
         public Troll3D.Viewport viewport;
 
-        /// <summary>La projection </summary>
+        /// <summary>
+        /// La projection 
+        /// </summary>
         public Projection projection_;
 
-        /// <summary> Une vue peut potentiellement afficher son contenu dans une RenderTexture si cela est défini lors de l'initialisation </summary>
+        /// <summary>
+        /// Une vue peut potentiellement afficher son contenu dans une RenderTexture 
+        /// </summary>
         public RenderTexture RenderTexture;
 
-
-        /// <summary> Ultra important pour rendre ce que la vue "voit" </summary>
+        /// <summary>
+        /// Ultra important pour rendre ce que la vue "voit" 
+        /// </summary>
         public Transform Transformation;
-
-
     }
 }

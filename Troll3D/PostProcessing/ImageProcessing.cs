@@ -31,7 +31,7 @@ namespace Troll3D
                 }
             }
 
-            m_initialImage = new ShaderResourceView( ApplicationDX11.Instance.device_, image.GetTexture2D() );
+            m_initialImage = new ShaderResourceView( ApplicationDX11.Instance.Device, image.GetTexture2D() );
             Initialize( width, height );
         }
 
@@ -150,7 +150,7 @@ namespace Troll3D
         /// </summary>
         public void Draw()
         {
-            ApplicationDX11.Instance.devicecontext_.OutputMerger.BlendState = ApplicationDX11.Instance.LastRenderToTextureBlendState;
+            ApplicationDX11.Instance.DeviceContext.OutputMerger.BlendState = ApplicationDX11.Instance.LastRenderToTextureBlendState;
 
             View.Current = PostProcessingView;
 
@@ -215,12 +215,12 @@ namespace Troll3D
 
             View.Current = PostProcessingView;
 
-            ApplicationDX11.Instance.devicecontext_.OutputMerger.BlendState = ApplicationDX11.Instance.RenderToTextureBlendState;
+            ApplicationDX11.Instance.DeviceContext.OutputMerger.BlendState = ApplicationDX11.Instance.RenderToTextureBlendState;
 
             //// On définit le renderTargetView pour bien dessiner dans la bonne RenderTexture
             GetCurrentOutput().BeginRender();
 
-            ApplicationDX11.Instance.devicecontext_.ClearRenderTargetView(
+            ApplicationDX11.Instance.DeviceContext.ClearRenderTargetView(
                GetCurrentOutput().GetRenderTargetView(),
                new Color4( 0.0f, 1.0f, 0.0f, 1.0f ) );
 
@@ -234,7 +234,7 @@ namespace Troll3D
             }
 
 
-            SamplerState state = new SamplerState( ApplicationDX11.Instance.device_, new SamplerStateDescription()
+            SamplerState state = new SamplerState( ApplicationDX11.Instance.Device, new SamplerStateDescription()
             {
                 AddressU = TextureAddressMode.Clamp,
                 AddressV = TextureAddressMode.Clamp,

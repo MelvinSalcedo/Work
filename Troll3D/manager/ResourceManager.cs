@@ -11,18 +11,18 @@ namespace Troll3D
 
         public static ShaderResourceView GetSRVFromResource( Resource resource )
         {
-            return new ShaderResourceView( ApplicationDX11.Instance.device_, resource );
+            return new ShaderResourceView( ApplicationDX11.Instance.Device, resource );
         }
 
         public static ShaderResourceView GetShaderResourceViewFromFile( string path )
         {
-            return new ShaderResourceView( ApplicationDX11.Instance.device_,
-                    Texture2D.FromFile( ApplicationDX11.Instance.device_, GetRealPath( path ) ) );
+            return new ShaderResourceView( ApplicationDX11.Instance.Device,
+                    Texture2D.FromFile( ApplicationDX11.Instance.Device, GetRealPath( path ) ) );
         }
 
         public static Texture2D GetTexture2DFromFile( string path )
         {
-            return ( Texture2D )Texture2D.FromFile( ApplicationDX11.Instance.device_, GetRealPath( path ) );
+            return ( Texture2D )Texture2D.FromFile( ApplicationDX11.Instance.Device, GetRealPath( path ) );
         }
 
         public static string GetFontRealPath( string path )

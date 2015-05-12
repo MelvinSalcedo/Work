@@ -28,14 +28,14 @@ namespace Troll3D.Rendering
             InitializeDepthStencilStateDescription();
 
             // Create the depth stencil state.
-            depthstencilstate = new DepthStencilState( ApplicationDX11.Instance.device_, depthstencilstatedesc );
+            depthstencilstate = new DepthStencilState( ApplicationDX11.Instance.Device, depthstencilstatedesc );
 
             // Initialize and set up the depth stencil view.
             InitializeDepthStencilViewDescription();
 
             // Create the depth stencil view.
             depthstencilview = new DepthStencilView(
-                ApplicationDX11.Instance.device_,
+                ApplicationDX11.Instance.Device,
                 depthstencilbuffer,
                 depthstencilviewdesc );
 
@@ -53,14 +53,14 @@ namespace Troll3D.Rendering
                     }
                 };
 
-                shaderResourceView_ = new ShaderResourceView( ApplicationDX11.Instance.device_, depthstencilbuffer, ShaderResourceViewDesc );
+                shaderResourceView_ = new ShaderResourceView( ApplicationDX11.Instance.Device, depthstencilbuffer, ShaderResourceViewDesc );
             }
         }
 
 
         public void Clear()
         {
-            ApplicationDX11.Instance.devicecontext_.ClearDepthStencilView(
+            ApplicationDX11.Instance.DeviceContext.ClearDepthStencilView(
                 depthstencilview,
                 DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil,
                 1.0f,
@@ -119,7 +119,7 @@ namespace Troll3D.Rendering
 
         public void InitializeDepthStencilBuffer()
         {
-            depthstencilbuffer = new Texture2D( ApplicationDX11.Instance.device_, depthbufferdescription );
+            depthstencilbuffer = new Texture2D( ApplicationDX11.Instance.Device, depthbufferdescription );
         }
 
         public void InitializeDepthStencilStateDescription()

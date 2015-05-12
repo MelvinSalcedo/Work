@@ -63,14 +63,14 @@ namespace Troll3D{
 
         public virtual void Render(){
 
-            ApplicationDX11.Instance.devicecontext_.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
+            ApplicationDX11.Instance.DeviceContext.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
 
-            ApplicationDX11.Instance.devicecontext_.InputAssembler.SetVertexBuffers(
+            ApplicationDX11.Instance.DeviceContext.InputAssembler.SetVertexBuffers(
                 0,
                 new VertexBufferBinding(m_Vertexbuffer, VertexSize(),
                 0));
 
-            ApplicationDX11.Instance.devicecontext_.InputAssembler.SetIndexBuffer(
+            ApplicationDX11.Instance.DeviceContext.InputAssembler.SetIndexBuffer(
                 m_Indexbuffer,
                 SharpDX.DXGI.Format.R32_UInt,
                 0);
@@ -83,7 +83,7 @@ namespace Troll3D{
                 SharpDX.Utilities.Dispose<SharpDX.Direct3D11.Buffer>(ref m_Vertexbuffer);
             }
 
-            m_Vertexbuffer = SharpDX.Direct3D11.Buffer.Create(ApplicationDX11.Instance.device_,
+            m_Vertexbuffer = SharpDX.Direct3D11.Buffer.Create(ApplicationDX11.Instance.Device,
                 BindFlags.VertexBuffer,
                 GetVerticesArray()
                 );
@@ -97,7 +97,7 @@ namespace Troll3D{
             }
 
             m_Indexbuffer = SharpDX.Direct3D11.Buffer.Create(
-                ApplicationDX11.Instance.device_,
+                ApplicationDX11.Instance.Device,
                 BindFlags.IndexBuffer,
                 GetFaceIndexesArray());
         }

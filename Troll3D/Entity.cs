@@ -7,24 +7,30 @@ using Troll3D.Components;
 
 namespace Troll3D
 {
+    /// <summary>
     // Les objets de la classe Entity seront répertorié par le programme Direct, et pourront porter les 
     // composants de base d'une application 3D (Mesh, transformation etc)
     // La classe Entity va également stocker son parent et ses descendant. La classe transform utilisera
     // l'accesseur de Entity pour récupérer le transform de son parent et déterminer sa position
+    /// </summary>
     public class Entity
     {
 
+        /// <summary>
+        /// Construit un nouvel objet de la classe entité. La construction entraine l'ajoute
+        /// de l'objet entité dans la scene
+        /// </summary>
         public Entity( Entity parent = null )
         {
             m_components = new List<TComponent>();
-            layer_          = 0;
-            transform_ =(Transform) AddComponent( new Transform() );
-            sons_           = new List<Entity>();
+            layer_ = 0;
+            transform_ = ( Transform )AddComponent( new Transform() );
+            sons_ = new List<Entity>();
             Scene.CurrentScene.Sons.Add( this );
 
-            parent_         = parent;
-            show_       = true;
-            GlowEffet   = new GlowEffect();
+            Parent = parent;
+            show_ = true;
+            GlowEffet = new GlowEffect();
             IsPickingActivated = true;
             Name = "New Entity";
         }
@@ -33,7 +39,7 @@ namespace Troll3D
         /// Ajoute un composant à l'entité. Si l'entité dispose déjà du composant, retourne null </summary>
         /// <param name="componentToAdd"></param>
         /// <returns></returns>
-        public TComponent AddComponent(TComponent componentToAdd)
+        public TComponent AddComponent( TComponent componentToAdd )
         {
             foreach ( TComponent component in m_components )
             {
@@ -48,11 +54,15 @@ namespace Troll3D
             return componentToAdd;
         }
 
+        /// <summary>
+        /// Ajoute un composant à l'entité en utilisant son constructeur par défault
+        /// le composant doit hériter du type TComponent
+        /// </summary>
         public T AddComponent<T>() where T : TComponent, new()
         {
             T component = new T();
 
-            foreach(TComponent comp in m_components)
+            foreach ( TComponent comp in m_components )
             {
                 if ( comp.Type == component.Type )
                 {
@@ -64,7 +74,11 @@ namespace Troll3D
             return component;
         }
 
-        public TComponent GetComponent(ComponentType type) 
+        /// <summary>
+        /// Retourne un composant du type passé en paramètre, il faudra sans doute
+        /// réfléchir à une méthode plus "efficace"/"intuitive"
+        /// </summary>
+        public TComponent GetComponent( ComponentType type )
         {
             foreach ( TComponent component in m_components )
             {
@@ -76,14 +90,21 @@ namespace Troll3D
             return null;
         }
 
+        /// <summary>
+        /// Supprime l'entité
+        /// To do : Invoquer les méthodes de supression des différents composants
+        /// </summary>
         public void Delete()
         {
-            if ( parent_ != null )
+            if ( Parent != null )
             {
-                parent_.RemoveSon( this );
+                Parent.RemoveSon( this );
             }
         }
 
+        /// <summary>
+        /// Affecte un "calque" à l'entité ainsi qu'à tout ses enfants
+        /// </summary>
         public void SetLayerRecursivly( int layerval )
         {
             layer_ = layerval;
@@ -93,38 +114,23 @@ namespace Troll3D
             }
         }
 
+        /// <summary>
+        /// Ajoute un enfant à l'entité, et le retourne
+        /// </summary>
         public Entity Append( Entity son )
         {
-            son.parent_ = this;
-            son.transform_.parent = this.transform_;
+            son.Parent = this;
+            son.transform_.Parent = this.transform_;
             sons_.Add( son );
             return son;
         }
 
-        public Entity Parent
-        {
-            get { return parent_; }
-        }
+        public Entity   Parent { get; private set; }
+        public int      SonsCount {get { return sons_.Count; }}
+        public Entity   Son( int i ){ return sons_[i];}
 
-        public int SonsCount
-        {
-            get { return sons_.Count; }
-        }
-
-        public Entity Son( int i )
-        {
-            return sons_[i];
-        }
-
-        public void RemoveSon( int i )
-        {
-            sons_.RemoveAt( i );
-        }
-
-        public void RemoveSon( Entity son )
-        {
-            sons_.Remove( son );
-        }
+        public void RemoveSon( int i ){sons_.RemoveAt( i );}
+        public void RemoveSon( Entity son ){sons_.Remove( son );}
 
         public virtual void Update()
         {
@@ -161,7 +167,6 @@ namespace Troll3D
         public int layer_;
 
         public List<Entity> sons_;
-        private Entity parent_;
 
         public bool showbb;
         public Transform transform_;

@@ -104,8 +104,8 @@ namespace Troll3D
             {
                 if ( m_Lights[i].shadowmap_ != null )
                 {
-                    ApplicationDX11.Instance.devicecontext_.VertexShader.SetShaderResource( 20 + i, m_Lights[i].shadowmap_.shaderResourceView_ );
-                    ApplicationDX11.Instance.devicecontext_.PixelShader.SetShaderResource( 20 + i, m_Lights[i].shadowmap_.shaderResourceView_ );
+                    ApplicationDX11.Instance.DeviceContext.VertexShader.SetShaderResource( 20 + i, m_Lights[i].shadowmap_.shaderResourceView_ );
+                    ApplicationDX11.Instance.DeviceContext.PixelShader.SetShaderResource( 20 + i, m_Lights[i].shadowmap_.shaderResourceView_ );
 
                 }
             }

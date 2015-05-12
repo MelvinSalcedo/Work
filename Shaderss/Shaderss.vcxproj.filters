@@ -13,20 +13,5 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Fragment">
-      <UniqueIdentifier>{a1ff472d-c63e-4227-9640-c3f1c194599c}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="src\Vertex\vDefault.hlsl" />
-    <FxCompile Include="src\Vertex\vSkybox.hlsl" />
-    <FxCompile Include="src\Geometry\gDefaultLine.hlsl" />
-    <FxCompile Include="src\Geometry\gBillboarding.hlsl" />
-    <FxCompile Include="src\Geometry\gDefault.hlsl" />
-    <FxCompile Include="src\Fragment\pUnlit.hlsl" />
-    <FxCompile Include="src\Fragment\pSkybox.hlsl" />
-    <FxCompile Include="src\Fragment\pHBlur.hlsl" />
-    <FxCompile Include="src\Fragment\pVBlur.hlsl" />
-    <FxCompile Include="src\Fragment\pGlow.hlsl" />
   </ItemGroup>
 </Project>

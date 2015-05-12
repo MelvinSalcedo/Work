@@ -25,11 +25,11 @@ namespace Troll3D.Components.Collisions
 
         public void Init( float width, float height, float depth )
         {
-            Mesh = Cube.GetMesh();
+            Mesh = Cube.Mesh;
 
             transform_ = new Transform();
 
-            transform_.parent = ( Transform )Entity.GetComponent( ComponentType.Transform );
+            transform_.Parent = ( Transform )Entity.GetComponent( ComponentType.Transform );
             
             min_ = new Vector3( -width / 2.0f, -height / 2.0f, -depth / 2.0f );
             max_ = new Vector3( width / 2.0f, height / 2.0f, depth / 2.0f );
