@@ -10,7 +10,6 @@ namespace Troll3D.Common.IA.PathFinding
 {
     public class Dijkstra
     {
-
         public Dijkstra( Graph graph )
         {
             m_graph = graph;
@@ -27,20 +26,43 @@ namespace Troll3D.Common.IA.PathFinding
         }
 
         /// <summary>
-        /// Invoquez cette méthode pour démarrer le calcul de chemin
+        /// Initialise la recherche de chemin
         /// </summary>
         public void Start( Node startNode, Node endNode )
         {
-
+            Initialize( startNode, endNode );
+            AddToOpenList( startNode );
         }
 
         public bool Process()
         {
-            while ( m_openList.Count > 0 )
+            if ( m_openList.Count > 0 )
             {
+                // On récupère le noeud dont le cout est le plus faible
 
+                Node node  = PickCheapestNode();
+
+                // On tiens à jour une variable qui contient le noeud le plus proche de la destination souhaité
+                // au cas ou on serait incapable d'atteindre cette dernière
+                RegisterClosestNode(node);
+
+                if ( node == m_end )
+                {
+                    m_pathfound = true;
+                    return false;
+                    // ProcessOver
+                }
+                else
+                {
+                    // On inspecte les voisins du noeud extrait par l'aglorithme de sélection
+                    ManageNeighbours( node );
+                    return true;
+                }
             }
-            return false;
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -153,6 +175,7 @@ namespace Troll3D.Common.IA.PathFinding
         {
             m_cost      = new int[m_graph.Count];
             m_parents   = new int[m_graph.Count];
+            m_isListed  = new bool[m_graph.Count];
             Reset();
 
             m_start = start;

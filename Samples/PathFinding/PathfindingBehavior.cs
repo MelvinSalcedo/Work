@@ -19,39 +19,44 @@ namespace PathFinding
         {
             m_tilemap = ( TileMap )Entity.GetComponent( ComponentType.TileMap );
 
+            // On définit les valeurs par défault des cases de départ et d'arrivé comme
+            // étant les coins opposés de la grille
+
             m_startX = 0;
             m_startY = 0;
 
-            m_endX    = 9;
-            m_endY    = 9;
+            Width   = 10;
+            Height  = 10;
 
-            m_tilemap.SetTileVal( 0, 0, 2 );
-            m_tilemap.SetTileVal( 9, 9, 3 );
+            m_endX = Width-1;
+            m_endY = Width-1;
 
-            
+            m_tilemap.SetTileVal( m_startX, m_startY, 2 );
+            m_tilemap.SetTileVal( m_endX,   m_endY, 3 );
+
             m_graph = new Graph();
 
-            for ( int i = 0; i < 10; i++ )
+            for ( int i = 0; i < Width; i++ )
             {
-                for ( int j = 0; j < 10; j++ )
+                for ( int j = 0; j < Width; j++ )
                 {
-                    m_graph.AddNode( new AStarNode( (short)(i * 10 + j), j, i ) );
+                    m_graph.AddNode( new AStarNode( ( short )( i * Width + j ), j, i ) );
                 }
             }
 
             // On définit les voisins des noeuds du graphe
-            for ( int i = 0; i < 10; i++ )
+            for ( int i = 0; i < Width; i++ )
             {
-                for ( int j = 0; j < 10; j++ )
+                for ( int j = 0; j < Width; j++ )
                 {
                     if(j<9)
                     {
-                        m_graph.GetNode( i * 10 + j ).ConnectTwoWays( m_graph.GetNode( i * 10 + j+1 ) );
+                        m_graph.GetNode( i * Width + j ).ConnectTwoWays( m_graph.GetNode( i * Width + j + 1 ) );
                     }
 
                     if(i<9)
                     {
-                        m_graph.GetNode( i * 10 + j ).ConnectTwoWays( m_graph.GetNode( (i+1) * 10 + j ) );
+                        m_graph.GetNode( i * Width + j ).ConnectTwoWays( m_graph.GetNode( ( i + 1 ) * Width + j ) );
                     }
                 }
             }
@@ -59,37 +64,8 @@ namespace PathFinding
 
         public void ComputePath()
         {
-            ComputeAStarPath();
+            //ComputeAStarPath();
             ComputeDijstraPath();
-        }
-
-        /// <summary>
-        /// Calcule le chemin en utilisant l'algorithme de A étoile
-        /// </summary>
-        public void ComputeAStarPath()
-        {
-            AStar astar = new AStar( m_graph );
-            astar.Start( m_graph.GetNode( m_startY * 10 + m_startX ), m_graph.GetNode( m_endY * 10 + m_endX ) );
-            List<Node> nodes = astar.Execute();
-            ResetTilemap();
-
-            for ( int i = 0; i < nodes.Count; i++ )
-            {
-                AStarNode node = ( AStarNode )nodes[i];
-                m_tilemap.SetTileVal( ( int )node.Position.X, ( int )node.Position.Y, 5 );
-                if ( node.Position.X == m_endX && node.Position.Y == m_endY )
-                {
-                    m_tilemap.SetTileVal( ( int )node.Position.X, ( int )node.Position.Y, 3 );
-                }
-            }
-        }
-
-        /// <summary>
-        /// Calcule le chemin en utilisant l'algorithme de Dijkstra
-        /// </summary>
-        public void ComputeDijstraPath()
-        {
-            Dijkstra dijkstra = new Dijkstra( m_graph );
         }
 
         /// <summary>
@@ -102,7 +78,6 @@ namespace PathFinding
             {
                 for ( int j = 0; j < 10; j++ )
                 {
-                    
                     if ( j == m_startX && i == m_startY )
                     {
                         m_tilemap.SetTileVal( j, i, 2 );
@@ -115,19 +90,23 @@ namespace PathFinding
                     {
                         m_tilemap.SetTileVal( j, i, 0 );
                     }
-                    
                 }
             }
         }
 
         public override void OnKeyDown( KeyboardEvent e )
         {
+            //On calcule et affiche le chemin
             if ( e.keycode_ == KeyCode.Key_S )
             {
                 ComputePath();
             }
         }
 
+        /// <summary>
+        /// On remet à zéro les valeurs permettant de drag les cases start et end
+        /// </summary>
+        /// <param name="e"></param>
         public override void OnMouseUp( MouseEvent e )
         {
             m_isDown    = false;
@@ -135,6 +114,10 @@ namespace PathFinding
             m_dragStart = false;
         }
 
+        /// <summary>
+        /// Déplace les cases start et end si l'utilisteur les "drag"
+        /// </summary>
+        /// <param name="e"></param>
         public override void OnMouseMove( MouseEvent e )
         {
             if ( m_isDown )
@@ -144,7 +127,6 @@ namespace PathFinding
 
                 if ( x < 10 && y < 10 )
                 {
-
                     if ( m_dragStart )
                     {
                         if ( !( x == m_endX && y == m_endY ) )
@@ -168,6 +150,7 @@ namespace PathFinding
                 }
             }
         }
+
         public override void OnMouseDown( MouseEvent e )
         {
             int x = (int)( (( float )e.mouse_.x / ( float )Screen.Instance.Width ) * 10.0f);
@@ -177,7 +160,6 @@ namespace PathFinding
             {
                 m_isDown = true;
                 m_dragStart = true;
-
             }
 
             if ( x == m_endX && y == m_endY )
@@ -190,6 +172,47 @@ namespace PathFinding
         public int Width { get; private set; }
         public int Height { get; private set; }
         public int Count { get { return Width * Height;} }
+
+        /// <summary>
+        /// Affiche le chemin en coloriant les tuiles en bleu
+        /// </summary>
+        /// <param name="nodes"></param>
+        private void DisplayPath( List<Node> nodes )
+        {
+            for ( int i = 0; i < nodes.Count; i++ )
+            {
+                int x = nodes[i].Id % Width;
+                int y = nodes[i].Id / Width;
+
+                // On vérifie que la tuile ne soit pas celle d'arrivée
+                if (!( x == m_endX && y== m_endY ))
+                {
+                    m_tilemap.SetTileVal( x, y, 5 );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Calcule le chemin en utilisant l'algorithme de A étoile
+        /// </summary>
+        private void ComputeAStarPath()
+        {
+            AStar astar = new AStar( m_graph );
+            astar.Start( m_graph.GetNode( m_startY * Width + m_startX ), m_graph.GetNode( m_endY * Width + m_endX ) );
+            ResetTilemap();
+            DisplayPath( astar.Execute() );
+        }
+
+        /// <summary>
+        /// Calcule le chemin en utilisant l'algorithme de Dijkstra
+        /// </summary>
+        private void ComputeDijstraPath()
+        {
+            Dijkstra dijkstra = new Dijkstra( m_graph );
+            dijkstra.Start( m_graph.GetNode( m_startY * Width + m_startX ), m_graph.GetNode( m_endY * Width + m_endX ) );
+            ResetTilemap();
+            DisplayPath( dijkstra.Execute() );
+        }
 
         private List<int> Cells = new List<int>();
 
