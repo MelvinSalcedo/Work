@@ -33,7 +33,7 @@ namespace Collisions
             entity.AddComponent<OBB>();
             MeshRenderer mr =  entity.AddComponent<MeshRenderer>();
             mr.material_    = new MaterialDX11( "vDefault.cso", "pDiffuse.cso","gDefault.cso" );
-            mr.model_       = Cube.GetMesh();
+            mr.model_       = Cube.Mesh;
             mr.material_.SetMainColor( 0.0F, 1.0f, 0.0f, 1.0f );
             entity.AddComponent<FirstCube>();
 
@@ -47,7 +47,7 @@ namespace Collisions
             entity2.AddComponent<PickableCube>();
             MeshRenderer mr2 = entity2.AddComponent<MeshRenderer>();
             mr2.material_ = new MaterialDX11( "vDefault.cso", "pDiffuse.cso", "gDefault.cso" );
-            mr2.model_ = Cube.GetMesh();
+            mr2.model_ = Cube.Mesh;
             mr2.material_.SetMainColor( 0.0f, 0.0F, 1.0f, 1.0f );
             
 

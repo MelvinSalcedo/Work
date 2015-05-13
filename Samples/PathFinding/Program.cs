@@ -24,7 +24,7 @@ namespace PathFinding
             Camera.Main.m_transform.LookAt( new Vector3( 0.0f, 0.0f, 1.0f ), Vector3.Zero);
 
             Entity entity = new Entity();
-            Texture2D tilesetImage = ( Texture2D )Texture2D.FromFile( ApplicationDX11.Device(), "D:\\Work\\Resources\\tilesetAStar.png" );
+            Texture2D tilesetImage = ( Texture2D )Texture2D.FromFile( ApplicationDX11.Instance.Device, "D:\\Work\\Resources\\tilesetAStar.png" );
             TileSet tileset = new TileSet( tilesetImage, 32, 32 );
 
             TileMap tm = entity.AddComponent<TileMap>();

@@ -65,7 +65,9 @@ namespace PathFinding
         public void ComputePath()
         {
             //ComputeAStarPath();
-            ComputeDijstraPath();
+            //ComputeDijstraPath();
+            //ComputeBFSPath();
+            ComputeDFSPath();
         }
 
         /// <summary>
@@ -198,7 +200,7 @@ namespace PathFinding
         private void ComputeAStarPath()
         {
             AStar astar = new AStar( m_graph );
-            astar.Start( m_graph.GetNode( m_startY * Width + m_startX ), m_graph.GetNode( m_endY * Width + m_endX ) );
+            astar.Start( Start, End);
             ResetTilemap();
             DisplayPath( astar.Execute() );
         }
@@ -209,10 +211,37 @@ namespace PathFinding
         private void ComputeDijstraPath()
         {
             Dijkstra dijkstra = new Dijkstra( m_graph );
-            dijkstra.Start( m_graph.GetNode( m_startY * Width + m_startX ), m_graph.GetNode( m_endY * Width + m_endX ) );
+            dijkstra.Start( Start,End );
             ResetTilemap();
             DisplayPath( dijkstra.Execute() );
         }
+
+        private void ComputeBFSPath()
+        {
+            BFS bfs = new BFS( m_graph );
+            bfs.Start( Start, End );
+            ResetTilemap();
+            DisplayPath( bfs.Execute() );
+        }
+
+        private void ComputeDFSPath()
+        {
+            DFS dfs = new DFS( m_graph );
+            dfs.Start( Start, End );
+            ResetTilemap();
+            DisplayPath( dfs.Execute() );
+        }
+
+        /// <summary>
+        /// Retourne le noeud correspondant au départ du chemin
+        /// </summary>
+        private Node Start{get{return m_graph.GetNode( m_startY * Width + m_startX );}}
+
+        /// <summary>
+        /// Retourne le noeud correspondant à l'arrivé du chemin
+        /// </summary>
+        private Node End { get { return m_graph.GetNode( m_endY * Width + m_endX ); } }
+
 
         private List<int> Cells = new List<int>();
 

@@ -59,7 +59,7 @@ namespace Troll3D
             // Maintenant, on utilise la matrice de la caméra pour récupérer la position "réelle" du point
 
             Matrix lol = Camera.Main.m_transform.worldmatrix_ * Camera.Main.GetProjection().Data;
-            lol.Invert();
+            //lol.Invert();
 
             Vector4 transformed = Vector4.Transform( new Vector4( MousePosition, -1.0f, 1.0f ), lol );
             Vector4 transformed2 = Vector4.Transform( new Vector4( MousePosition, 1.0f, 1.0f ), lol );
