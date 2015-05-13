@@ -34,10 +34,12 @@ namespace Troll3D.Rendering
             InitializeDepthStencilViewDescription();
 
             // Create the depth stencil view.
-            depthstencilview = new DepthStencilView(
+            depthstencilview = new DepthStencilView
+            (
                 ApplicationDX11.Instance.Device,
                 depthstencilbuffer,
-                depthstencilviewdesc );
+                depthstencilviewdesc 
+            );
 
             // On précise si on souhaite enregistrer le DepthStencil dans une texture pour une utilisation ultérieure
             if ( IsShaderResource )
@@ -83,10 +85,6 @@ namespace Troll3D.Rendering
         public DepthStencilViewDescription depthstencilviewdesc;
         public DepthStencilView depthstencilview;
 
-        // Private
-
-        // Methods
-
         public bool IsShaderResource;
 
         public void InitializeDepthBufferDescription()
@@ -122,13 +120,24 @@ namespace Troll3D.Rendering
             depthstencilbuffer = new Texture2D( ApplicationDX11.Instance.Device, depthbufferdescription );
         }
 
+        public void SetDepthComparison( Comparison comparison )
+        {
+            depthstencilstatedesc.DepthComparison = comparison;
+
+            // Create the depth stencil state.
+            depthstencilstate = new DepthStencilState( ApplicationDX11.Instance.Device, depthstencilstatedesc );
+
+            ApplicationDX11.Instance.DeviceContext.OutputMerger.SetDepthStencilState( depthstencilstate );
+
+        }
+
         public void InitializeDepthStencilStateDescription()
         {
             depthstencilstatedesc = new DepthStencilStateDescription()
             {
                 IsDepthEnabled = true,
                 DepthWriteMask = DepthWriteMask.All,
-                DepthComparison = Comparison.Less,
+                DepthComparison = m_comparison,
                 IsStencilEnabled = true,
                 StencilReadMask = 0xFF,
                 StencilWriteMask = 0xFF,
@@ -164,6 +173,11 @@ namespace Troll3D.Rendering
                 }
             };
         }
+
+        /// <summary>
+        /// Valeur par défault
+        /// </summary>
+        private Comparison m_comparison = Comparison.Less;
 
 
 

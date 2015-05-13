@@ -18,7 +18,7 @@ namespace EnvironmentalMapping
     {
         static void Main( string[] args )
         {
-            ApplicationDX11 application = new ApplicationDX11( 1000, 1000 );
+            ApplicationDX11 application = new ApplicationDX11( 1980, 1020 );
 
             Camera.Main.Entity.AddComponent<Trackview>();
             //Camera.Main.Entity.transform_.LookAt( new Vector3( 0.0f, 0.0f, 0.0f ), new Vector3( 0.0f, 5.0f, -5.0f ) );
@@ -33,8 +33,8 @@ namespace EnvironmentalMapping
             Entity entity = new Entity();
             MeshRenderer mr = entity.AddComponent<MeshRenderer>();
             mr.material_ = new MaterialDX11("vDefault.cso","pEmap.cso");
-            mr.material_.AddTexture( "D:\\Work\\Resources\\grasscube1024.dds" );
-            mr.model_ = Sphere.Mesh(1.0f,20,20);
+            mr.material_.AddTexture( "D:\\Work\\Resources\\snowcube1024.dds" );
+            mr.model_ = Sphere.Mesh(1.0f,50,50);
             
             entity.transform_.SetPosition( 0.0f, 0.0f, 0.0f );
 

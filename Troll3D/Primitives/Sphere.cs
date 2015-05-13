@@ -102,7 +102,7 @@ namespace Troll3D{
             (mesh.GetVertexCount() - 1),
             (mesh.GetVertexCount() - xdiscretisation - 1));
 
-            mesh.ComputeNormals();
+            //mesh.ComputeNormals();
             mesh.ComputeTangents();
             
             

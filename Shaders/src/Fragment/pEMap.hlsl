@@ -26,7 +26,10 @@ float4 main(PixelInput input) : SV_Target{
 		uvs.x = uvs.x * TilingWidth;
 		uvs.y = uvs.y * TilingHeight;
 
-		color = tex0.Sample(textureSampler, input.normal);
+
+		float3 reflectionVector = reflect(-cameraPosition, input.normal);
+			
+			color = tex0.Sample(textureSampler, reflectionVector);
 	}
 	else
 	{

@@ -26,17 +26,19 @@ namespace Troll3D.Components
             m_renderer = new MeshRenderer();
             m_renderer.material_ = new MaterialDX11("vSkybox.cso","pSkybox.cso");
 
-            m_renderer.material_.AddTexture( "D:\\Work\\Resources\\grasscube1024.dds" );
+            m_renderer.material_.AddTexture( "D:\\Work\\Resources\\snowcube1024.dds" );
 
             m_renderer.material_.SetMainColor( 0.0f, 1.0f, 1.0F, 0.5F );
             m_renderer.model_       = Sphere.ReverseMesh(1.0f,50,50);
             m_renderer.Transform = m_SkyboxEntity.transform_;
+
             Scene.CurrentScene.RemoveRenderable( m_renderer );
         }
 
         public void Render()
         {
             m_SkyboxEntity.transform_.SetPosition( m_cameraEntity.transform_.GetPosition() );
+            m_SkyboxEntity.transform_.Update();
 
             Console.WriteLine( 
                 m_renderer.Transform.GetPosition().X + " " +

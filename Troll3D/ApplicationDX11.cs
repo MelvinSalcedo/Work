@@ -296,12 +296,15 @@ namespace Troll3D
 
             renderTex = new RenderTexture( Screen.Instance.Width, Screen.Instance.Height );
             imageProcessing = new ImageProcessing( Screen.Instance.Width, Screen.Instance.Height, renderTex.GetSRV() );
-
+            //renderTarget.DepthStencil.SetDepthComparison( Comparison.LessEqual );
+            m_mainRenderTarget.DepthStencil.SetDepthComparison( Comparison.LessEqual );
             new InputManager( m_renderForm );
         }
 
         private void DrawFromCamera( Camera camera, RenderTarget renderTarget )
         {
+            
+
             GlowingPass(camera);
             ShadowMappingPass( camera );
 
@@ -311,16 +314,6 @@ namespace Troll3D
             renderTarget.Clear();
             renderTarget.Bind();
 
-            // On vérifie si la camera possède une skybox
-
-            if ( camera.Skybox != null )
-            {
-                // Dans ce cas, on affiche la skybox
-
-                camera.Skybox.Render();
-            }
-
-
             LightManager.Instance.Update( View.Current );
 
             if ( !turnOffSceneRendering )
@@ -328,6 +321,17 @@ namespace Troll3D
                 //ProjectorManager.Instance.Bind();
                 scene_.Render();
                 //ProjectorManager.Instance.UnBind();
+            }
+
+            //renderTarget.DepthStencil.SetDepthComparison( Comparison.Greater );
+            // On vérifie si la camera possède une skybox
+
+
+            if ( camera.Skybox != null )
+            {
+                // Dans ce cas, on affiche la skybox
+                // On l'affiche en dernier pour éviter d'effectuer les test du Stencil buffer inutilement
+                camera.Skybox.Render();
             }
             // if (Isglowing){
             // GlowingManager.Instance.DrawQuadOnTop();
