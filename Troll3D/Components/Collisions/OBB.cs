@@ -27,7 +27,6 @@ namespace Troll3D.Components.Collisions
         {
             Mesh = Cube.Mesh;
 
-            transform_ = new Transform();
 
             transform_.Parent = ( Transform )Entity.GetComponent( ComponentType.Transform );
             
@@ -46,6 +45,7 @@ namespace Troll3D.Components.Collisions
         public override void Attach( Entity entity ) 
         {
             base.Attach( entity );
+            transform_ = entity.transform_;
 
             if ( entity.GetComponent( ComponentType.MeshRenderer ) == null )
             {

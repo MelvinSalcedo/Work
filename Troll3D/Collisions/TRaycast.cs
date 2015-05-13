@@ -34,6 +34,7 @@ namespace Troll3D
             // Maintenant, on utilise la matrice de la caméra pour récupérer la position "réelle" du point
 
             Matrix lol = Camera.Main.GetProjection().Data * Camera.Main.m_transform.worldmatrix_;
+            lol.Invert();
 
             Vector4 transformed = Vector4.Transform( new Vector4( MousePosition, -1.0f, 1.0f ), lol );
             transformed.X = transformed.X / transformed.W;
@@ -59,7 +60,7 @@ namespace Troll3D
             // Maintenant, on utilise la matrice de la caméra pour récupérer la position "réelle" du point
 
             Matrix lol = Camera.Main.m_transform.worldmatrix_ * Camera.Main.GetProjection().Data;
-            //lol.Invert();
+            lol.Invert();
 
             Vector4 transformed = Vector4.Transform( new Vector4( MousePosition, -1.0f, 1.0f ), lol );
             Vector4 transformed2 = Vector4.Transform( new Vector4( MousePosition, 1.0f, 1.0f ), lol );
@@ -173,8 +174,7 @@ namespace Troll3D
                         ray.start_.Z + t * ray.direction_.Z
                     );
 
-                    bool returnval = PointInTriangle( posA, posB, posC, P );
-                    if ( returnval == true )
+                    if ( PointInTriangle( posA, posB, posC, P ) )
                     {
                         if ( !isClosestPointSet )
                         {

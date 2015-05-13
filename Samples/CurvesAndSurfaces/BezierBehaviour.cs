@@ -21,7 +21,7 @@ namespace CurvesAndSurfaces
 
         public override void Update()
         {
-            RebuildCurve();
+            BuildBSpline();
         }
 
         public override void OnMouseDown( MouseEvent e )
@@ -62,6 +62,28 @@ namespace CurvesAndSurfaces
             }
         }
 
+        
+
+        private void BuildBSpline()
+        {
+            BSpline spline = new BSpline();
+
+
+            for ( int i = 0; i < Entity.sons_.Count; i++ )
+            {
+                spline.AddControlPoint( Entity.sons_[i].transform_.WorldPosition() );
+            }
+            spline.Degree = 2;
+            spline.Loop = false;
+            spline.Clamp = true;
+            
+            spline.SetDiscretisation( 100 );
+            spline.ConstructSpline();
+
+            BuildCurve(spline.GetCurve());
+            
+
+        }
         private void RebuildCurve()
         {
             m_bezier = new BezierCurve();
@@ -73,8 +95,14 @@ namespace CurvesAndSurfaces
 
             m_bezier.SetDiscretisation( 100 );
             m_bezier.ConstructSpline();
+            BuildCurve(m_bezier.GetCurve());
+        }
 
-            List<Vector3> points = m_bezier.GetCurve();
+        /// <summary>
+        /// Construit la courbe pour l'affichage
+        /// </summary>
+        private void BuildCurve( List<Vector3> points )
+        {
             List<StandardVertex> vertices = new List<StandardVertex>();
 
             LineMesh linemesh = new LineMesh();
@@ -82,12 +110,13 @@ namespace CurvesAndSurfaces
             for ( int i = 0; i < points.Count - 1; i++ )
             {
                 vertices.Add( new StandardVertex( points[i] ) );
-                vertices.Add( new StandardVertex( points[i+1] ) );
+                vertices.Add( new StandardVertex( points[i + 1] ) );
             }
 
             m_lineRenderer.Vertices = vertices;
             m_lineRenderer.UpdateRenderer();
         }
+
 
         private BezierCurve m_bezier;
         private LineRenderer m_lineRenderer;

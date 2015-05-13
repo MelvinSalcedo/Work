@@ -18,7 +18,7 @@ namespace CurvesAndSurfaces
             ApplicationDX11 application = new ApplicationDX11( 1000, 1000 );
 
             Camera.Main.m_transform.LookAt( new Vector3( 0.0f, 0.0f, 1.0f ), new Vector3( 0.0f, 0.0f, -2.0f ) );
-            Camera.Main.SetProjection( new OrthoProjection( 2, 2, 0, 100 ) );
+            Camera.Main.SetProjection( new OrthoProjection( 3, 3, 0, 100 ) );
             //Camera.Main.Entity.AddComponent<Trackview>();
             Entity entity = new Entity();
             entity.AddComponent<BezierBehaviour>();

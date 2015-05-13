@@ -31,7 +31,6 @@ namespace Collisions
                     DraggedOffset = Entity.transform_.WorldPosition() - IntersectionPoint;
                 }
             }
-            
         }
 
         public override void OnMouseMove( MouseEvent e )
@@ -56,7 +55,6 @@ namespace Collisions
                 Vector3 point = plane.IntersectionWithLine( new LineGeometry( ray.start_, ray.direction_ ) );
 
                 Entity.transform_.SetPosition( point + DraggedOffset );
-
             }
         }
 
@@ -75,7 +73,6 @@ namespace Collisions
         /// et le point initial de sélection
         /// </summary>
         public Vector3  DraggedOffset;
-
 
         /// <summary>
         /// Point de l'intersection entre le rayon et le collider
