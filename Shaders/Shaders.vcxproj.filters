@@ -28,5 +28,6 @@
     <FxCompile Include="src\Fragment\pHBlur.hlsl" />
     <FxCompile Include="src\Fragment\pVBlur.hlsl" />
     <FxCompile Include="src\Fragment\pGlow.hlsl" />
+    <FxCompile Include="src\Fragment\pEMap.hlsl" />
   </ItemGroup>
 </Project>

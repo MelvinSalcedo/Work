@@ -320,13 +320,6 @@ namespace Troll3D
                 localmatrix_        = scalematrix_ * rotationmatrix_ * positionmatrix_;
             }
 
-            if ( IsViewMatrix )
-            {
-                if ( custommatrix_ || islookingat_ )
-                {
-                    //localmatrix_.Invert();
-                }
-            }
         }
 
         private void UpdateDirectionsVector()
@@ -382,9 +375,9 @@ namespace Troll3D
             {
                 if ( View.Current.Transformation.islookingat_ || View.Current.Transformation.custommatrix_ )
                 {
-                    Matrix matrixView =  View.Current.Transformation.localmatrix_;
-                    worldviewproj_.View = matrixView;
-                    
+
+                    worldviewproj_.View = View.Current.Transformation.localmatrix_;
+                    Matrix matrixView = Matrix.Invert( View.Current.Transformation.localmatrix_);
                     worldviewproj_.CameraPosition = matrixView.TranslationVector;
 
                     
