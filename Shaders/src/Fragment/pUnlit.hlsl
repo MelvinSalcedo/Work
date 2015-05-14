@@ -21,8 +21,9 @@ float4 main(PixelInput input) : SV_Target
 
 		uvs.x = uvs.x * TilingWidth;
 		uvs.y = uvs.y * TilingHeight;
-
-		return textureMap.Sample(textureSampler, float2(XOffset, YOffset) + uvs);
+		float4 colorlol = textureMap.Sample(textureSampler, float2(XOffset, YOffset) + uvs);
+			colorlol.w = 1.0f;
+		return colorlol;
 	}
 	else
 	{

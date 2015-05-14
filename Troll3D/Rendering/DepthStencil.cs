@@ -125,7 +125,11 @@ namespace Troll3D.Rendering
             depthstencilstatedesc.DepthComparison = comparison;
 
             // Create the depth stencil state.
-            depthstencilstate = new DepthStencilState( ApplicationDX11.Instance.Device, depthstencilstatedesc );
+            depthstencilstate = new DepthStencilState
+            ( 
+                ApplicationDX11.Instance.Device,
+                depthstencilstatedesc 
+            );
 
             ApplicationDX11.Instance.DeviceContext.OutputMerger.SetDepthStencilState( depthstencilstate );
 
@@ -159,7 +163,6 @@ namespace Troll3D.Rendering
                 }
             };
         }
-
 
         public void InitializeDepthStencilViewDescription()
         {

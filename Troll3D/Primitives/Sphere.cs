@@ -12,7 +12,6 @@ namespace Troll3D{
     /// </summary>
     public class Sphere 
     {
-
         public static Mesh Mesh(float radius, int xdiscretisation, int ydiscretisation) 
         {
             StandardMesh mesh = new StandardMesh();
@@ -20,13 +19,15 @@ namespace Troll3D{
             List<StandardVertex> vertices = new List<StandardVertex>();
             List<int> indices_ = new List<int>();
 
+            // Création des sommets
+
             mesh.AddVertex(new StandardVertex(
                 new Vector3(0.0f, -radius, 0.0f),
                 new Vector3(0.0f, -1.0f, 0.0f),
                 new Vector2(0.0f, 0.0f)
             ));
 
-            for (int i = 1; i < ydiscretisation; ++i) {
+            for (int i = 0; i < ydiscretisation; ++i) {
 
                 for (int j = 0; j < xdiscretisation; ++j) {
 
@@ -55,17 +56,19 @@ namespace Troll3D{
                 new Vector2(0.0f, 1.0f)
             ));
 
+            // Création des faces
             for (int i = 0; i < xdiscretisation-1; i++) {
                 indices_.Add(0);
                 indices_.Add(i + 1);
                 indices_.Add(i + 2);
             }
 
+            
             indices_.Add(0);
             indices_.Add(xdiscretisation);
             indices_.Add(1);
             
-            for (int i = 0; i < ydiscretisation-2; i++) {
+            for (int i = 0; i < ydiscretisation-1; i++) {
                 for (int j = 0; j < xdiscretisation-1; j++) {
 
                     mesh.AddFace(

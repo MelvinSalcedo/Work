@@ -125,7 +125,7 @@ namespace Troll3D
                 if ( i + 1 < passes_.Count )
                 {
 
-                    m_input = GetCurrentOutput().GetSRV();
+                    m_input = GetCurrentOutput().SRV;
 
                     // On Switch les Render to Texture de manière à ne pas avoir à en stocker 3 milliards
                     SwitchCurrentOutput();
@@ -137,7 +137,7 @@ namespace Troll3D
         {
             if ( passes_.Count > 0 )
             {
-                return GetCurrentOutput().GetSRV();
+                return GetCurrentOutput().SRV;
             }
             else
             {
@@ -218,10 +218,10 @@ namespace Troll3D
             ApplicationDX11.Instance.DeviceContext.OutputMerger.BlendState = ApplicationDX11.Instance.RenderToTextureBlendState;
 
             //// On définit le renderTargetView pour bien dessiner dans la bonne RenderTexture
-            GetCurrentOutput().BeginRender();
+            GetCurrentOutput().Bind();
 
             ApplicationDX11.Instance.DeviceContext.ClearRenderTargetView(
-               GetCurrentOutput().GetRenderTargetView(),
+               GetCurrentOutput().RenderTargetView,
                new Color4( 0.0f, 1.0f, 0.0f, 1.0f ) );
 
             if ( mat.textures_.Count == 0 )

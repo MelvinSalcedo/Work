@@ -7,12 +7,11 @@ namespace Troll3D
 {
 
     /// <summary>
-    ///     Une Vue contient tout simplement une Matrice de Projection et une matrice de Transformation qui devra être initialisé
-    ///     lors de sa création. A partir de là, il devient possible de gérer les renderTexture et autres passes de ShadowMap serainement 
+    /// Une Vue contient tout simplement une Matrice de Projection et une matrice de Transformation qui devra être initialisé
+    /// lors de sa création. A partir de là, il devient possible de gérer les renderTexture et autres passes de ShadowMap serainement 
     /// </summary>
     public class View
     {
-
         /// <summary> 
         /// Les objets de la classe Entity ont besoin de connaitre la matrice de transformation et la
         /// projection de la Vue en cours d'utilisation. 
@@ -29,19 +28,6 @@ namespace Troll3D
             viewport = new Troll3D.Viewport( 0, 0, Screen.Instance.Width, Screen.Instance.Height);
             Transformation = transform;
             projection_ = projection;
-        }
-
-        public void AddRenderTexture( int width = -1, int height = -1 )
-        {
-            if ( width == -1 )
-            {
-                width = viewport.Width;
-            }
-            if ( height == -1 )
-            {
-                height = viewport.Height;
-            }
-            RenderTexture = new RenderTexture( this );
         }
 
         public void SetProjection( Projection projection )
@@ -98,11 +84,6 @@ namespace Troll3D
         /// La projection 
         /// </summary>
         public Projection projection_;
-
-        /// <summary>
-        /// Une vue peut potentiellement afficher son contenu dans une RenderTexture 
-        /// </summary>
-        public RenderTexture RenderTexture;
 
         /// <summary>
         /// Ultra important pour rendre ce que la vue "voit" 

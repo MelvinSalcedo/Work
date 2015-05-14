@@ -57,7 +57,7 @@ namespace Troll3D{
                     m_Material.AddConstantBuffer<GlowDesc>(new GlowDesc(false, false, new Vector4(0.0f, 0.0f, 0.0f, 1.0f)));
 
                     m_RenderTexture = new RenderTexture(width, height);
-                    m_ImageProcessing = new ImageProcessing(width, height, m_RenderTexture.GetSRV());
+                    m_ImageProcessing = new ImageProcessing(width, height, m_RenderTexture.SRV);
 
                     m_ImageProcessing.AddPasse(HBlurMaterial);
                     m_ImageProcessing.AddPasse(HBlurMaterial);
@@ -73,7 +73,6 @@ namespace Troll3D{
 
                         SourceAlphaBlend        = BlendOption.Zero,
                         DestinationAlphaBlend   = BlendOption.Zero,
-
 
                         SourceBlend         = BlendOption.One,
                         DestinationBlend    = BlendOption.One,
@@ -106,9 +105,9 @@ namespace Troll3D{
                     // On commence par rendre l'intégralité de la scène dans une texture
                     ApplicationDX11.Instance.DeviceContext.OutputMerger.BlendState = ApplicationDX11.Instance.RenderToTextureBlendState;
 
-                    m_RenderTexture.BeginRender();
+                    m_RenderTexture.Bind();
                     ApplicationDX11.Instance.DeviceContext.ClearRenderTargetView(
-                        m_RenderTexture.GetRenderTargetView(),
+                        m_RenderTexture.RenderTargetView,
                         new Color4(0.0f, 0.0f, 0.0f, 0.0f));
                
                     //for (int i = 0; i < scene.sons_.Count; i++){
@@ -196,10 +195,6 @@ namespace Troll3D{
 
                     ApplicationDX11.Instance.DeviceContext.OutputMerger.BlendState = glowingBlending;
                     View.Current = PostProcessingView;
-
-                 
-                    
-
                     transform_.Update();
                     //modelrenderer.Draw();
                 }

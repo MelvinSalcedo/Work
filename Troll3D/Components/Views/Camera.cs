@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using SharpDX;
 using SharpDX.Direct3D11;
 
+using Troll3D.Rendering;
+
 namespace Troll3D.Components
 {
 
@@ -42,12 +44,13 @@ namespace Troll3D.Components
             if ( Main == null )
             {
                 Main = this;
+                SetRenderTarget( ApplicationDX11.Instance.MainRenderTarget );
             }
 
-            m_View              = new View( m_transform, projection );
-            m_StencilManager    = new StencilManager( Screen.Instance.Width, Screen.Instance.Height);
-            IsActive            = true;
-            HasRenderTexture    = false;
+            m_View = new View( m_transform, projection );
+            m_StencilManager = new StencilManager( Screen.Instance.Width, Screen.Instance.Height );
+            IsActive = true;
+            HasRenderTexture = false;
 
             Cameras.Add( this );
         }
@@ -81,26 +84,21 @@ namespace Troll3D.Components
             SetViewport( new Troll3D.Viewport( offsetx, offsety, width, height ) );
         }
 
-        public Troll3D.Viewport GetViewport()
-        {
-            return m_View.viewport;
-        }
+        public Troll3D.Viewport GetViewport() { return m_View.viewport; }
+        public void SetProjection( Projection projection ) { m_View.projection_ = projection; }
 
-        public void SetProjection( Projection projection )
+        /// <summary>
+        /// Lie un renderTarget avec sa caméra
+        /// </summary>
+        /// <param name="rt"></param>
+        public void SetRenderTarget( RenderTarget rt )
         {
-            m_View.projection_ = projection;
-        }
-
-        /// <summary> Active la renderTexture de la caméra </summary>
-        public void AddRenderTexture( int width, int height )
-        {
-            m_RenderTexture = new RenderTexture( m_View );
-            HasRenderTexture = true;
+            rt.Camera = this;
         }
 
         public ShaderResourceView GetRenderTextureSRV()
         {
-            return m_RenderTexture.GetSRV();
+            return RenderTexture.SRV;
         }
 
         public ProjectionType GetProjectionType()
@@ -129,12 +127,21 @@ namespace Troll3D.Components
         /// <summary> Détermine si la caméra affiche son contenu à l'intérieur d'une texture </summary>
         public bool HasRenderTexture;
 
-        public RenderTexture    m_RenderTexture;
-        public StencilManager   m_StencilManager;
+        /// <summary>
+        /// Lien vers une éventuelle RenderTexture ou "rendre" la caméra
+        /// </summary>
+        public RenderTexture RenderTexture{get;private set;}
 
-        private View m_View;
+        /// <summary>
+        /// Gère le DepthStencilBuffer de la caméra
+        /// </summary>
+        public StencilManager m_StencilManager;
+
         public Transform m_transform;
         public Entity Entity;
         public Skybox Skybox;
+
+        private View m_View;
+
     }
 }

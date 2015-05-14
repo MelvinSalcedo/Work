@@ -47,7 +47,9 @@ float4 main(PixelInput input) : SV_Target{
 			//finalcolor += SpotLight(lights[i], eye, normal, input.realpos.xyz);
 		}
 	}
-	return  (float4(color, 1.0f))+(float4(finalcolor, 1.0f));
+	float4 lolilol = (float4(color, 1.0f)) + (float4(finalcolor, 1.0f));
+		lolilol.w = 1.0f;
+	return  lolilol;
 	//return float4(color, 1.0f);
 }
 

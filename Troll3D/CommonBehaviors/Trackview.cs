@@ -14,8 +14,8 @@ namespace Troll3D.Components
 
         public Trackview()
         {
-            Xoffset = 00.0f;
-            Yoffset = 0.0f;
+            Xoffset = 0.0f;
+            Yoffset = 3.1415f / 2.0f;
             Radius = 10.0f;
             Init( Radius, 0.01f, 0.03f );
         }
@@ -23,7 +23,7 @@ namespace Troll3D.Components
         public Trackview( float radius = 10.0f, float mouseSpeed = 0.01f, float wheelSpeed = 0.03f )
             : base()
         {
-            Xoffset = 00.0f;
+            Xoffset = 0.0f;
             Yoffset = 0.0f;
             Radius = 10.0f;
             Init( radius, mouseSpeed, wheelSpeed );
@@ -79,10 +79,12 @@ namespace Troll3D.Components
             val = -( float )Math.Cos( val );
             float radius = Radius;
 
-            Vector3 position = new Vector3(
-                        ( float )Math.Sin( Xoffset * MouseSpeed ) * ( float )Math.Cos( Yoffset * MouseSpeed ) * radius,
-                        val * radius,
-                        ( float )Math.Sin( Xoffset * MouseSpeed ) * ( float )Math.Sin( Yoffset * MouseSpeed ) * radius );
+            Vector3 position = new Vector3
+            (
+                ( float )Math.Sin( Xoffset * MouseSpeed ) * ( float )Math.Cos( Yoffset * MouseSpeed ) * radius,
+                val * radius,
+                ( float )Math.Sin( Xoffset * MouseSpeed ) * ( float )Math.Sin( Yoffset * MouseSpeed ) * radius 
+            );
 
 
             Entity.transform_.LookAt( Vector3.Zero, position );

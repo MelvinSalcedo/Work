@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LSystems", "Samples\LSystem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnvironmentalMapping", "Samples\EnvironmentalMapping\EnvironmentalMapping.csproj", "{17FC5710-E530-405E-B470-F09D1FAC3380}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderTextureTest", "Samples\RenderTextureTest\RenderTextureTest.csproj", "{A8152424-9CD4-4693-863D-780E99124890}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -246,6 +248,22 @@ Global
 		{17FC5710-E530-405E-B470-F09D1FAC3380}.Release|Win32.ActiveCfg = Release|Any CPU
 		{17FC5710-E530-405E-B470-F09D1FAC3380}.Release|x64.ActiveCfg = Release|Any CPU
 		{17FC5710-E530-405E-B470-F09D1FAC3380}.Release|x86.ActiveCfg = Release|Any CPU
+		{A8152424-9CD4-4693-863D-780E99124890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8152424-9CD4-4693-863D-780E99124890}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8152424-9CD4-4693-863D-780E99124890}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{A8152424-9CD4-4693-863D-780E99124890}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{A8152424-9CD4-4693-863D-780E99124890}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{A8152424-9CD4-4693-863D-780E99124890}.Debug|x64.ActiveCfg = Debug|x64
+		{A8152424-9CD4-4693-863D-780E99124890}.Debug|x64.Build.0 = Debug|x64
+		{A8152424-9CD4-4693-863D-780E99124890}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A8152424-9CD4-4693-863D-780E99124890}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8152424-9CD4-4693-863D-780E99124890}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8152424-9CD4-4693-863D-780E99124890}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{A8152424-9CD4-4693-863D-780E99124890}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{A8152424-9CD4-4693-863D-780E99124890}.Release|Win32.ActiveCfg = Release|Any CPU
+		{A8152424-9CD4-4693-863D-780E99124890}.Release|x64.ActiveCfg = Release|x64
+		{A8152424-9CD4-4693-863D-780E99124890}.Release|x64.Build.0 = Release|x64
+		{A8152424-9CD4-4693-863D-780E99124890}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -261,5 +279,6 @@ Global
 		{75D7AE00-D527-4F90-8130-24E65FEBFF28} = {6395E191-5CBD-4D59-8112-D362A5EF5199}
 		{5DF5C6B7-A6FD-42EB-BF18-D08F8CF8C7FD} = {6395E191-5CBD-4D59-8112-D362A5EF5199}
 		{17FC5710-E530-405E-B470-F09D1FAC3380} = {6395E191-5CBD-4D59-8112-D362A5EF5199}
+		{A8152424-9CD4-4693-863D-780E99124890} = {6395E191-5CBD-4D59-8112-D362A5EF5199}
 	EndGlobalSection
 EndGlobal

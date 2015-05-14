@@ -57,26 +57,31 @@ namespace Troll3D.Components
         {
             ApplicationDX11.Instance.DeviceContext.Rasterizer.State = State;
 
+            Transform.Update();
             // On envoie les informations de transformation
             Transform.SendConstantBuffer();
             // On envoie les informations portant sur la lumière
             LightManager.Instance.SendLights();
 
             // On envoie les informations de material / effet
-            material_.Begin();
-            if ( model_ != null )
+            if ( material_ != null )
             {
-                // On affiche le modèle
-                model_.Render();
+                material_.Begin();
+                if ( model_ != null )
+                {
+                    // On affiche le modèle
+                    model_.Render();
+                }
+
+                material_.End();
             }
             
-            material_.End();
         }
 
         public Transform Transform{get;set;}
 
         FillMode mode;
-        RasterizerState State;
+        public RasterizerState State;
         public RasterizerState rasterstate_;
         public MaterialDX11 material_;
         public Mesh model_;

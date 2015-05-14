@@ -4,6 +4,8 @@ using SharpDX;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 
+using Troll3D.Rendering;
+
 namespace Troll3D
 {
     /// <summary>
@@ -13,71 +15,27 @@ namespace Troll3D
     /// en " RENDER_TARGET" et SHADER_RESOURCE
     /// Ensuite, on crée un nouveau RenderTarget et ShaderResourceView utilisable par des materials
     /// </summary>
-    public class RenderTexture
+    public class RenderTexture : RenderTarget
     {
-
-        /// <summary> 
-        /// Creation d'une RenderTexture directement à partir de la taille du viewport
-        /// de la vue passé en paramètre 
-        /// </summary>
-        public RenderTexture( View view )
-        {
-            Initialize( view.viewport.Width, view.viewport.Height );
-        }
-
         /// <summary>
         /// Creation d'une RenderTexture aux dimensions spécifiés
         /// </summary>
-        public RenderTexture( int width, int height )
+        public RenderTexture( int width, int height ) : base(width,height)
         {
-            Initialize( width, height );
+            Initialize();
+
+            //ApplicationDX11.Instance.RenderTextures.Add( this );
         }
 
         public void Dispose()
         {
             Utilities.Dispose<ShaderResourceView>( ref m_ShaderResourceView );
             Utilities.Dispose<Texture2D>( ref m_Texture );
-            Utilities.Dispose<RenderTargetView>( ref m_RenderTargetView );
+            Utilities.Dispose<RenderTargetView>( ref RenderTargetView );
         }
 
-
-        /// <summary> 
-        /// Il faut invoquer cette méthode avant de commencer à dessiner des objets pour
-        /// les dessiner dans la texture 
-        /// </summary>
-        public void BeginRender()
+        private void Initialize()
         {
-
-            ApplicationDX11.Instance.DeviceContext.OutputMerger.SetTargets(
-                ApplicationDX11.Instance.stencilmanager_.depthstencilview,
-                m_RenderTargetView );
-
-            ClearRenderTargetView();
-
-            ApplicationDX11.Instance.stencilmanager_.Clear();
-            ApplicationDX11.Instance.SetViewport( 0, 0, m_Width, m_Height );
-        }
-
-        public void ClearRenderTargetView()
-        {
-            //ApplicationDX11.ClearRenderTargetView(m_RenderTargetView);
-        }
-
-        public ShaderResourceView GetSRV()
-        {
-            return m_ShaderResourceView;
-        }
-
-        public RenderTargetView GetRenderTargetView()
-        {
-            return m_RenderTargetView;
-        }
-
-        private void Initialize( int width, int height )
-        {
-            m_Width = width;
-            m_Height = height;
-
             InitializeTargetTexture();
             InitializeRenderTargetView();
             InitializeShaderResourceView();
@@ -90,61 +48,75 @@ namespace Troll3D
         /// </summary>
         private void InitializeTargetTexture()
         {
-
-            m_Texture = new Texture2D( ApplicationDX11.Instance.Device, new Texture2DDescription
-            {
-                ArraySize = 1,
-                Width = m_Width,
-                Height = m_Height,
-                MipLevels = 1,
-                Format = Format.R32G32B32A32_Float,
-                Usage = ResourceUsage.Default,
-                BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource,
-                CpuAccessFlags = CpuAccessFlags.None,
-                OptionFlags = 0,
-                SampleDescription = new SampleDescription()
+            m_Texture = new Texture2D
+            ( 
+                ApplicationDX11.Instance.Device,
+                new Texture2DDescription
                 {
-                    Count = 1
-                }
-            } );
+                    ArraySize = 1,
+                    Width = Width,
+                    Height = Height,
+                    MipLevels = 1,
+                    Format = Format.R32G32B32A32_Float,
+                    Usage = ResourceUsage.Default,
+                    BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource,
+                    CpuAccessFlags = CpuAccessFlags.None,
+                    OptionFlags = 0,
+                    SampleDescription = new SampleDescription()
+                    {
+                        Count = 1
+                    }
+                } 
+            );
         }
 
+        /// <summary>
+        /// Initialise le RenderTargetView de la RenderTexture. C'est cet objet qui sera
+        /// utilisé pour préciser ou l'on souhaite dessiner
+        /// </summary>
         private void InitializeRenderTargetView()
         {
-
-            m_RenderTargetView = new RenderTargetView( ApplicationDX11.Instance.Device, m_Texture, new RenderTargetViewDescription
-            {
-                Format = Format.R32G32B32A32_Float,
-                Dimension = RenderTargetViewDimension.Texture2D,
-                Texture2D = new RenderTargetViewDescription.Texture2DResource()
+            RenderTargetView = new RenderTargetView
+            (
+                ApplicationDX11.Instance.Device,
+                m_Texture,
+                new RenderTargetViewDescription
                 {
-                    MipSlice = 0
-                }
-            } );
+                    Format = m_Texture.Description.Format,
+                    Dimension = RenderTargetViewDimension.Texture2D,
+                    Texture2D = new RenderTargetViewDescription.Texture2DResource()
+                    {
+                        MipSlice = 0
+                    }
+                } 
+            );
         }
 
+        /// <summary>
+        /// Initialisation du ShaderResourceView. Cet objet peut être utilisé pour récupérer 
+        /// et plaquer la texture sur un objet de la scène
+        /// </summary>
         private void InitializeShaderResourceView()
         {
-
-            m_ShaderResourceView = new ShaderResourceView( ApplicationDX11.Instance.Device, m_Texture, new ShaderResourceViewDescription
-            {
-                Dimension = SharpDX.Direct3D.ShaderResourceViewDimension.Texture2D,
-                Format = Format.R32G32B32A32_Float,
-                Texture2D = new ShaderResourceViewDescription.Texture2DResource()
+            SRV = new ShaderResourceView
+            ( 
+                ApplicationDX11.Instance.Device,
+                m_Texture,
+                new ShaderResourceViewDescription
                 {
-                    MipLevels = 1,
-                    MostDetailedMip = 0
-                }
-            } );
+                    Dimension = SharpDX.Direct3D.ShaderResourceViewDimension.Texture2D,
+                    Format = m_Texture.Description.Format,
+                    Texture2D = new ShaderResourceViewDescription.Texture2DResource()
+                    {
+                        MipLevels = 1,
+                        MostDetailedMip = 0
+                    }
+                } 
+            );
         }
 
+        public ShaderResourceView SRV { get; private set; }
         private Texture2D m_Texture;
         private ShaderResourceView m_ShaderResourceView;
-        private RenderTargetView m_RenderTargetView;
-
-        private int m_Width;
-        private int m_Height;
-
-
     }
 }

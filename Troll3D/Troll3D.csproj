@@ -80,6 +80,7 @@
     <Compile Include="Components\Billboard.cs" />
     <Compile Include="Components\Collider.cs" />
     <Compile Include="Components\Collisions\OBB.cs" />
+    <Compile Include="Components\FrontQuad.cs" />
     <Compile Include="Components\GUI\TLabel.cs" />
     <Compile Include="Components\GUI\TSlider.cs" />
     <Compile Include="Components\GUI\TWidget.cs" />
