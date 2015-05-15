@@ -55,6 +55,16 @@ namespace Troll3D.Components
             Cameras.Add( this );
         }
 
+        public void DisplayFrustum()
+        {
+            Entity entity = new Entity( Entity );
+            MeshRenderer mr =  entity.AddComponent<MeshRenderer>();
+            mr.material_ = new MaterialDX11();
+            mr.SetFillMode( FillMode.Wireframe );
+            mr.material_.SetMainColor( 1.0f, 1.0F, 1.0F, 1.0F );
+            mr.model_ = ProjectionMesh.GetModel( GetProjection() );
+        }
+
         public override void Update()
         {
             m_View.Transformation = m_transform;

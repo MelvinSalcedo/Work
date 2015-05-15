@@ -119,6 +119,7 @@
     <Compile Include="DirectXHelper\SwapChain.cs" />
     <Compile Include="DirectXHelper\TimeHelper.cs" />
     <Compile Include="DirectXHelper\Viewport.cs" />
+    <Compile Include="DynamicCubemap.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="manager\CollisionManager.cs" />
     <Compile Include="manager\InputManager\InputEvent.cs" />

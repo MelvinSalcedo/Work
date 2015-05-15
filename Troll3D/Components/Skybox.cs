@@ -40,11 +40,11 @@ namespace Troll3D.Components
             m_SkyboxEntity.transform_.SetPosition( m_cameraEntity.transform_.GetPosition() );
             m_SkyboxEntity.transform_.Update();
 
-            Console.WriteLine( 
-                m_renderer.Transform.GetPosition().X + " " +
-                m_renderer.Transform.GetPosition().Y + " " +
-                m_renderer.Transform.GetPosition().Z
-            );
+            //Console.WriteLine( 
+            //    m_renderer.Transform.GetPosition().X + " " +
+            //    m_renderer.Transform.GetPosition().Y + " " +
+            //    m_renderer.Transform.GetPosition().Z
+            //);
 
             m_renderer.Render();
         }

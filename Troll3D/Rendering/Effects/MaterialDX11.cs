@@ -6,7 +6,6 @@ using SharpDX;
 
 namespace Troll3D
 {
-
     /// <summary>Un Matérial sert à gérer la communication entre l'application et le processeur graphique
     ///  en enregistrant les shaders et les différentes variables associés ( Variables constantes)
     /// </summary>
@@ -82,7 +81,8 @@ namespace Troll3D
             m_MaterialCBufferDesc.Send();
         }
 
-        /// <summary>On "Unbind", c'est à dire qu'on remet à 0 ce qui peut l'être pour éviter que certaines donnée du material en cours
+        /// <summary>
+        /// On "Unbind", c'est à dire qu'on remet à 0 ce qui peut l'être pour éviter que certaines donnée du material en cours
         /// ne déborde sur le prochain drawCall
         /// </summary>
         public void End()

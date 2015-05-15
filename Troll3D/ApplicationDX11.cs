@@ -123,6 +123,10 @@ namespace Troll3D
         {
             // On met à jour les renderTexture
             UpdateRenderTexture();
+
+            //On met à jour les cubemap
+            UpdateDynamicCubemaps();
+
             // On dessine la scene dans le RenderTarget Principal
             DrawFromCamera( MainRenderTarget.Camera, MainRenderTarget );
 
@@ -152,7 +156,7 @@ namespace Troll3D
         public ImageProcessing imageProcessing;
         public RenderTexture renderTex;
 
-        private void DrawFromCamera( Camera camera, RenderTarget renderTarget )
+        public void DrawFromCamera( Camera camera, RenderTarget renderTarget )
         {
             //GlowingPass( camera );
             //ShadowMappingPass( camera );
@@ -267,6 +271,14 @@ namespace Troll3D
             }
         }
 
+        private void UpdateDynamicCubemaps()
+        {
+            foreach ( DynamicCubemap cubemap in Cubemaps )
+            {
+                cubemap.Update();
+            }
+        }
+
         /// <summary>
         /// Initialise le raster state
         /// </summary>
@@ -339,6 +351,8 @@ namespace Troll3D
         /// Render Target Principal, sera utilisé par défault lors de la création de la main camera
         /// </summary>
         public RenderTarget MainRenderTarget;
+
+        public List<DynamicCubemap> Cubemaps = new List<DynamicCubemap>();
 
         /// <summary>
         /// Contient la liste des RenderTextures dans la scene
