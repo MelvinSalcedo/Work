@@ -8,87 +8,83 @@ namespace Troll3D
     /// <summary>
     /// Cette classe se charge de gérer l'utilisation des projecteurs à l'intérieur du pipeline graphique
     /// </summary>
-    public class ProjectorManager{
+    public class ProjectorManager
+    {
+        public static ProjectorManager Instance;
 
-        // Public
+        public ProjectorManager()
+        {
+            Instance = this;
+            description_ = new ProjectorsDesc
+            {
+                ProjectorCount = 0,
+                Projectors = new ProjectorDesc[10]
+            };
 
-            // Static Datas
+            constantBuffer_ = new CBuffer<ProjectorsDesc>( 3, description_ );
+        }
 
-                public static ProjectorManager Instance;
+        /// <summary>
+        /// Met à jour les projecteurs et charge leur données
+        /// </summary>
+        public void Bind()
+        {
+            int projectorCount = 0;
+            for ( int i = 0; i < projectors_.Count; i++ )
+            {
+                if ( projectors_[i].IsActive )
+                {
+                    projectors_[i].UpdateMatrix();
 
-            // Lifecycle
+                    description_.Projectors[projectorCount] = projectors_[i].projectorDesc;
 
-                public ProjectorManager(){
-                    Instance = this;
-                    description_ = new ProjectorsDesc{
-                        ProjectorCount= 0,
-                        Projectors = new ProjectorDesc[10]
-                    };
-
-                    constantBuffer_ = new CBuffer<ProjectorsDesc>(3, description_);
+                    ApplicationDX11.Instance.DeviceContext.VertexShader.SetShaderResource( 10 + projectorCount, projectors_[i].m_SRV );
+                    ApplicationDX11.Instance.DeviceContext.PixelShader.SetShaderResource( 10 + projectorCount, projectors_[i].m_SRV );
+                    projectorCount++;
                 }
+            }
 
-            // Methods
+            description_.ProjectorCount = projectorCount;
+
+            constantBuffer_.UpdateStruct( description_ );
+            constantBuffer_.Send();
+        }
+
+        /// <summary>
+        /// La méthode UnBind va se charger de mettre à null les ShaderResourceView 
+        /// </summary>
+        public void UnBind()
+        {
+            for ( int i = 10; i < 20; i++ )
+            {
+                ApplicationDX11.Instance.DeviceContext.VertexShader.SetShaderResource( i, null );
+                ApplicationDX11.Instance.DeviceContext.PixelShader.SetShaderResource( i, null );
+            }
+        }
+
+        public void AddProjector( Projector projector )
+        {
+            projectors_.Add( projector );
+        }
+
+        public void RemoveProjector( Projector projector )
+        {
+
+        }
+
+        public void SendProjectors()
+        {
+
+        }
+
+        public int ProjectorCount
+        {
+            get { return projectors_.Count; }
+        }
 
 
-                /// <summary>
-                /// Met à jour les projecteurs et charge leur données
-                /// </summary>
-                public void Bind(){
-
-                    int projectorCount = 0;
-                    for (int i = 0; i < projectors_.Count; i++)
-                    {
-                        if (projectors_[i].IsActive){
-                            projectors_[i].UpdateMatrix();
-                            
-                            description_.Projectors[projectorCount] = projectors_[i].projectorDesc;
-                            
-                            ApplicationDX11.Instance.DeviceContext.VertexShader.SetShaderResource(10   +projectorCount,   projectors_[i].m_SRV);
-                            ApplicationDX11.Instance.DeviceContext.PixelShader.SetShaderResource(10 + projectorCount, projectors_[i].m_SRV);
-                            projectorCount++;
-                        }
-                    }
-
-                    description_.ProjectorCount = projectorCount;
-
-                    constantBuffer_.UpdateStruct(description_);
-                    constantBuffer_.Send();
-                }
-
-                /// <summary>
-                /// La méthode UnBind va se charger de mettre à null les ShaderResourceView 
-                /// </summary>
-                public void UnBind(){
-                    for (int i = 10; i < 20; i++){
-                        ApplicationDX11.Instance.DeviceContext.VertexShader.SetShaderResource(i,null);
-                        ApplicationDX11.Instance.DeviceContext.PixelShader.SetShaderResource(i, null);
-                    }
-                }
-
-                public void AddProjector(Projector projector){
-                    projectors_.Add(projector);
-                }
-
-                public void RemoveProjector(Projector projector){
-
-                }
-
-                public void SendProjectors(){
-
-                }
-
-                public int ProjectorCount{
-                    get { return projectors_.Count;}
-                }
-        
-        // Private
-
-            // Datas
-
-                
-                private List<Projector>             projectors_ = new List<Projector>();
-                private ProjectorsDesc              description_;
-                private CBuffer<ProjectorsDesc>     constantBuffer_;
+        private List<Projector> projectors_ = new List<Projector>();
+        private ProjectorsDesc description_;
+        private CBuffer<ProjectorsDesc> constantBuffer_;
     }
 }

@@ -1,7 +1,7 @@
 #include <StandardPixelInput.hlsl>
 #include <Lights.hlsl>
 #include <Projector.hlsl>
-
+#include <transform.hlsl>
 // Filter Possible Val : MIN_MAG_MIP_POINT
 //texture
 
@@ -20,7 +20,6 @@ float4 main(PixelInput input) : SV_Target
 		// En directx, la caméra regarde les Z positifs
 		// contrairement à Opengl (ta race)
 
-		//return float4(direction,1.0f);
 
 		// On multiplie la position du pixel par la matrice du projecteur . Si x et y 
 		// sont compris entre [-1 et 1] alors on peut les utiliser comme coordonnées de texture (je crois)
@@ -33,7 +32,6 @@ float4 main(PixelInput input) : SV_Target
 		val.y = 1 - (val.y / val.w / 2.0f + 0.5f);
 		val.z = val.z / val.w / 2.0f + 0.5f;
 
-		return float4(direction,1.0f);
 		//return float4(acos(dot(normalize(direction), input.normal.xyz)) /3.141592f , 0.0f, 0.0f, 1.0f);
 
 		//return float4(val.z, 0.0f, 0.0f, 1.0f);
@@ -52,24 +50,13 @@ float4 main(PixelInput input) : SV_Target
 	float3 normal = normalize(input.normal.xyz);
 	float3 eye = normalize(eyePosition - input.realpos.xyz);
 
-	float4 finalcolor = float4(0.0, 0.0, 0.0, 0.0);
+	float3 finalcolor = float3(0.0, 0.0, 0.0);
 		
-	for (int i = 0; i < lightCount; i++)
-	{
-		if (lights[i].Type == 0){
-			//finalcolor += PointLight(lights[i], eye, normal, input.realpos.xyz);
-		}
-		else if (lights[i].Type == 1){
-			//finalcolor += DirectionalLight(lights[i], eye, normal, input.realpos.xyz);
-		}
-		else{
-			finalcolor += SpotLight(lights[i], eye, normal, input.realpos.xyz);
-		}
-	}
+	finalcolor = ComputeLight(input.realpos, input.normal.xyz, cameraPosition);
 
 	if (pixelValue.w > 0.0f)
 	{
-		return lerp(pixelValue, finalcolor, 0.5f);
+		return lerp(pixelValue, float4(finalcolor,1.0f), 0.5f);
 	}
-	return (finalcolor);
+	return float4(finalcolor,1.0f);
 }

@@ -16,7 +16,8 @@ namespace Troll3D.Components
         TileMap,
         Collider,
         LineRenderer,
-        FrontQuad
+        FrontQuad,
+        Projector
     }
 
     public abstract class TComponent

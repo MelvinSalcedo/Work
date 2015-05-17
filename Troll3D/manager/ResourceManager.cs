@@ -14,7 +14,11 @@ namespace Troll3D
             return new ShaderResourceView( ApplicationDX11.Instance.Device, resource );
         }
 
-        public static ShaderResourceView GetShaderResourceViewFromFile( string path )
+        /// <summary>
+        /// Charge une image dans le dossier des resources
+        /// </summary>
+        /// <returns></returns>
+        public static ShaderResourceView GetImageFromFile( string path )
         {
             return new ShaderResourceView( ApplicationDX11.Instance.Device,
                     Texture2D.FromFile( ApplicationDX11.Instance.Device, GetRealPath( path ) ) );
@@ -25,45 +29,15 @@ namespace Troll3D
             return ( Texture2D )Texture2D.FromFile( ApplicationDX11.Instance.Device, GetRealPath( path ) );
         }
 
-        public static string GetFontRealPath( string path )
-        {
-            string totalpath;
-
-#if DEBUG
-            totalpath = DebugFontPath + path;
-#else
-                        totalpath = ReleaseFontPath+ path;
-#endif
-            return totalpath;
-
-        }
+        public static string GetFontRealPath( string path ) { return FontPath + path; }
 
 
-        private static string GetRealPath( string path )
-        {
-            string totalpath;
-
-            #if DEBUG
-            totalpath = DebugPath + path;
-            #else
-                        totalpath = ReleasePath+ path;
-            #endif
-            return totalpath;
-        }
-
-
-        // Static Datas
+        private static string GetRealPath( string path ) { return Path + path; }
 
         /// <summary>
         /// Petits raccourcis pour récupérer l'endroit ou sont stocké les images et faciliter un peu tout
         /// </summary>
-        private static string DebugPath = "C:\\NewWorkbench\\DotNet\\Work\\Resources\\";
-        private static string ReleasePath = ".\\";
-
-        private static string DebugFontPath = "C:\\NewWorkbench\\DotNet\\Work\\Resources\\Fonts\\";
-        private static string ReleaseFontPath = ".\\Fonts";
-
-
-
+        private static string Path = "D:\\Work\\Resources\\";
+        private static string FontPath = "D:\\Work\\Resources\\Fonts";
     }
 }

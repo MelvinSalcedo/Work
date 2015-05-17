@@ -62,6 +62,7 @@ namespace Troll3D.Components
             Transform.SendConstantBuffer();
             // On envoie les informations portant sur la lumière
             LightManager.Instance.SendLights();
+            ProjectorManager.Instance.Bind();
 
             // On envoie les informations de material / effet
             if ( material_ != null )

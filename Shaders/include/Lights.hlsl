@@ -1,4 +1,5 @@
-struct Light{
+struct Light
+{
 
 	float4x4 Projection;		// La projection sera utilisé pour la gestion des ombres
 	float4x4 Transformation;	// Matrice contenant les transformation de la lumière. On l'utilisera pour déduire
@@ -61,35 +62,35 @@ Texture2D shadowmap9: register(t29);
 
 
 
-float3 LightPosition(Light light){
+float3 LightPosition(Light light)
+{
 	return	mul(light.Inverse, float4(0.0f, 0.0f, 0.0f, 1.0f)).xyz;
 }
 
-float3 LightDirection(Light light){
+float3 LightDirection(Light light)
+{
 	return (mul(transpose(light.Transformation), float4(0.0f, 0.0f, 1.0f, 0.0f)).xyz);
 }
 
-float3 ComputeColor(Light light, float3 eye, float3 normal, float3 lightDirection, float3 halfvector, float3 lightposition, float3 pixelPosition){
+float3 ComputeColor(Light light, float3 eye, float3 normal, float3 lightDirection, float3 halfvector, float lightdistance, float3 pixelPosition){
 
 		float3 Is = float3(0.0f, 0.0f, 0.0f);
-
-		float	lightdistance = distance(lightposition, pixelPosition);
 
 		// On commence par calculer la composante ambiante
 		float3 Ia = saturate(AmbiantCoef*light.Ambiantcolor);
 
-		float coefdistanceintensity = min(
-		((1 - lightdistance / light.Range)*(light.Intensity)),
-		1.0f
+		float coefdistanceintensity = min
+		(
+			((1 - lightdistance / light.Range)*(light.Intensity)),
+			1.0f
 		);
-
 
 		float3 Id = float3(0.0, 0.0, 0.0);
 
-		if (max(dot(normal, lightDirection), 0.0)>0.0){
-
-
+		if (max(dot(normal, lightDirection), 0.0)>0.0)
+		{
 			// Composante Diffuse
+
 			Id = (light.LightColor)* max(dot(normal, lightDirection), 0.0)* coefdistanceintensity;
 			Id = saturate(DiffuseCoef*Id);
 
@@ -99,8 +100,8 @@ float3 ComputeColor(Light light, float3 eye, float3 normal, float3 lightDirectio
 				Is = float3(0.0, 0.0, 0.0);
 				// no specular reflection
 			}
-			else{
-
+			else
+			{
 				float specularangle = max(dot(normal, halfvector), 0.0);
 				//// Composante Spéculaire
 				Is = (light.LightColor)*pow(specularangle, light.SpecularIntensity) *coefdistanceintensity;
@@ -112,56 +113,12 @@ float3 ComputeColor(Light light, float3 eye, float3 normal, float3 lightDirectio
 
 }
 
-float3 DirectionalLight(Light light,float3 diffuseColor, float3 eye, float3 normal, float3 lightDirection){
-
-	eye				=	normalize(eye);
-	normal			=	normalize(normal);
-	lightDirection	= -	normalize(lightDirection);
-
-	float3	halfvector = normalize(eye + lightDirection);
-
-	float3 Is = float3(0.0f, 0.0f, 0.0f);
-
-	// On commence par calculer la composante ambiante
-	float3 Ia = saturate(light.Ambiantcolor);
-
-	float3 Id = float3(0.0, 0.0, 0.0);
-
-		if (max(dot(normal, lightDirection), 0.0)>0.0){
-
-			float coefdistanceintensity = 1.0f;
-
-			// Composante Diffuse
-			Id = (diffuseColor)* max(dot(normal, lightDirection), 0.0)* coefdistanceintensity;
-			Id = saturate(Id);
-
-			if (dot(normal, lightDirection) < 0.0)
-				// light source on the wrong side?
-			{
-				Is = float3(0.0, 0.0, 0.0);
-				// no specular reflection
-			}
-			else{
-
-				float specularangle = max(dot(normal, halfvector), 0.0);
-				//// Composante Spéculaire
-				Is = pow(specularangle, light.SpecularIntensity) *coefdistanceintensity;
-				Is = saturate(Is);
-			}
-
-		
-
-		}
-	// Addition des différentes composantes
-	return (Ia + Id +  Is);
-}
 
 
 
 
-float4 SpotLight(Light light, float3 eye, float3 normal, float3 pixelPosition){
-
-
+float4 SpotLight(Light light, float3 eye, float3 normal, float3 pixelPosition)
+{
 		float3 position		= (LightPosition(light));
 		float3 direction	= (LightDirection(light));
 
@@ -202,7 +159,7 @@ float4 SpotLight(Light light, float3 eye, float3 normal, float3 pixelPosition){
 }
 
 
-float3 PointLight(Light light, float3 eye, float3 normal, float4 pixelPosition)
+float3 PointLight(Light light, float3 eye, float3 normal, float3 pixelPosition)
 {
 	float3 position = LightPosition(light);
 	eye = normalize(-eye);
@@ -210,6 +167,47 @@ float3 PointLight(Light light, float3 eye, float3 normal, float4 pixelPosition)
 	float3 lightDirection = normalize(position - pixelPosition.xyz);
 	float3	halfvector = normalize(eye + lightDirection);
 
-	return ComputeColor(light, eye, normal, lightDirection, halfvector, position, pixelPosition.xyz);
+	return ComputeColor(light, eye, normal, lightDirection, halfvector, distance(position, pixelPosition), pixelPosition.xyz);
+}
+
+
+float3 DirectionalLight(Light light, float3 eye, float3 normal, float3 lightDirection, float3 pixelPosition){
+
+	eye		= normalize(-eye);
+	normal	= normalize(normal);
+	lightDirection = -normalize(lightDirection);
+
+	float3	halfvector = normalize(eye + lightDirection);
+	return ComputeColor(light, eye, normal, lightDirection, halfvector, 0.0f, pixelPosition.xyz);
+}
+
+
+///
+/// Calcule la couleur d'un point en fonction des différentes caméras
+///
+float3 ComputeLight(float3 pixelPosition, float3 normal, float3 cameraPosition)
+{
+	float3 color = float3(0.0f, 0.0f, 0.0f);
+
+	float3 eye = normalize(pixelPosition - cameraPosition);
+
+	for (int i = 0; i < lightCount; i++)
+	{
+
+		if (lights[i].Type == 0)
+		{
+			color += PointLight(lights[i], eye, normal, pixelPosition);
+		}
+		else if (lights[i].Type == 1)
+		{
+			color += DirectionalLight(lights[i], eye, normal, LightDirection(lights[i]), pixelPosition);
+		}
+		else
+		{
+			//finalcolor += SpotLight(lights[i], eye, normal, input.realpos.xyz);
+		}
+	}
+
+	return color;
 }
 

@@ -33,5 +33,6 @@
     <FxCompile Include="src\Fragment\pTilemapping.hlsl" />
     <FxCompile Include="src\Fragment\pProjector.hlsl" />
     <FxCompile Include="src\Fragment\pShowAlphaValue.hlsl" />
+    <FxCompile Include="src\Fragment\pLSystem.hlsl" />
   </ItemGroup>
 </Project>

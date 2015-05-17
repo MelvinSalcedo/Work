@@ -3,19 +3,42 @@ using System.Collections.Generic;
 using SharpDX;
 using SharpDX.Direct3D11;
 
+using Troll3D.Components;
+
 namespace Troll3D
 {
-
-    public class Projector : Entity
+    /// <summary>
+    /// Représente un projecteur, se charge de "projeter" une image en suivant la projection (frustum) qui lui
+    /// est associé
+    /// </summary>
+    public class Projector : TComponent
     {
-
-        public Projector( ShaderResourceView srv, Projection projection, Entity parent = null )
-            : base( parent )
+        public Projector()
         {
-            m_View = new View( transform_, projection );
-            m_SRV = srv;
+            Type = ComponentType.Projector;
             ProjectorManager.Instance.AddProjector( this );
             IsActive = true;
+        }
+
+        public override void Update()
+        {
+            
+        }
+
+        public override void Attach( Entity entity )
+        {
+            Entity = entity;
+        }
+
+        public void SetImage( ShaderResourceView srv )
+        {
+            m_SRV = srv;
+        }
+
+        public void SetProjection( Projection projection )
+        {
+            Projection = projection;
+            m_View = new View( Entity.transform_, projection );
         }
 
         public void SetFrustum( float fieldOfView, float ratio, float near, float far )
@@ -31,14 +54,17 @@ namespace Troll3D
         public void UpdateMatrix()
         {
             projectorDesc.Projection = m_View.projection_.Data;
-            projectorDesc.Transformation = transform_.GetViewMatrix();
-            projectorDesc.Inverse = Matrix.Invert( transform_.GetViewMatrix() );
+            projectorDesc.Transformation = Entity.transform_.GetViewMatrix();
+            projectorDesc.Inverse = Matrix.Invert( Entity.transform_.GetViewMatrix() );
         }
+
+        public Projection Projection;
 
         public ProjectorDesc projectorDesc;
         public bool IsActive;
         public View m_View;
         public ShaderResourceView m_SRV;
+        public Entity Entity;
 
 
     }

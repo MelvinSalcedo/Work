@@ -7,8 +7,7 @@ namespace Troll3D.Components.Lighting
 {
     public class DirectionalLight : Light
     {
-
-        public DirectionalLight(  )
+        public DirectionalLight()
         {
             SetIntensity( 0.1f );
             SetSpecularIntensity( 6.0f );
@@ -23,8 +22,8 @@ namespace Troll3D.Components.Lighting
         {
             //modelrenderer_ = new MeshRenderer(new MaterialDX11(), ProjectionMesh.GetModel(projection));
             //modelrenderer_.SetFillMode(SharpDX.Direct3D11.FillMode.Wireframe);
-           // SetProjection( projection );
-           // m_View = new View( transform_, projection );
+            // SetProjection( projection );
+            // m_View = new View( transform_, projection );
         }
     }
 }

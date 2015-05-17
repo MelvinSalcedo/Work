@@ -19,34 +19,22 @@ float4 main(PixelInput input) : SV_Target{
 	float3 finalcolor = float3(0.0, 0.0, 0.0);
 	float3 color;
 
-	if (HasTexture){
-
+	if (HasTexture)
+	{
 		float2 uvs = input.uv;
 
-			uvs.x = uvs.x * TilingWidth;
-			uvs.y = uvs.y * TilingHeight;
+		uvs.x = uvs.x * TilingWidth;
+		uvs.y = uvs.y * TilingHeight;
 
 		color = tex0.Sample(textureSampler, float2(XOffset, YOffset) + uvs);
 	}
-	else{
+	else
+	{
 		color = MainColor;
 	}
 
-
-	for (int i = 0; i < lightCount; i++){
-
-		if (lights[i].Type == 0)
-		{
-			finalcolor += PointLight(lights[i], (normalize(input.realpos - cameraPosition).xyz), input.normal.xyz, input.realpos);
-		}
-		else if (lights[i].Type == 1){
-
-			//finalcolor += DirectionalLight(lights[i], color.xyz, -input.view, input.normal, input.light0);
-		}
-		else{
-			//finalcolor += SpotLight(lights[i], eye, normal, input.realpos.xyz);
-		}
-	}
+	finalcolor =  ComputeLight(input.realpos, input.normal.xyz, cameraPosition);
+	
 	float4 lolilol = (float4(color, 1.0f)) + (float4(finalcolor, 1.0f));
 		lolilol.w = 1.0f;
 	return  lolilol;
