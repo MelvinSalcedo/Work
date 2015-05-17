@@ -23,7 +23,8 @@ namespace EnvironmentalMapping
 
             DynamicCubemap cubemap = new DynamicCubemap( 1000 );
 
-            Camera.Main.Entity.AddComponent<Trackview>();
+            Trackview tv =  Camera.Main.Entity.AddComponent<Trackview>();
+            tv.WheelSpeed = 0.002f;
             //Camera.Main.Entity.transform_.LookAt( new Vector3( 0.0f, 0.0f, 0.0f ), new Vector3( 0.0f, 5.0f, -5.0f ) );
             Camera.Main.Skybox = new Skybox( Camera.Main.Entity );
 
@@ -35,10 +36,17 @@ namespace EnvironmentalMapping
             pl.SetIntensity( 1.0F );
             
             Entity entity = new Entity();
+            entity.AddComponent<RotateCube>();
             MeshRenderer mr = entity.AddComponent<MeshRenderer>();
             mr.material_ = new MaterialDX11("vDefault.cso","pEmap.cso");
             mr.material_.AddShaderResourceView( cubemap.SRV );
-            mr.model_ = Sphere.Mesh(1.0f,50,50);
+            mr.model_ = Sphere.Mesh( 1.0f, 50, 50 );
+            //mr.model_ = MeshManager.LoadObj( "StanfordBunny.obj" );
+            //mr.model_ = MeshManager.LoadObj( "dragon.obj" );
+            //mr.model_ = MeshManager.LoadObj( "UtahTeapot.obj" );
+            //mr.model_ = MeshManager.LoadObj( "Trex.OBJ" );
+            //mr.model_ = MeshManager.LoadObj( "Predator.OBJ" );
+            entity.transform_.SetScale( 1.0f, 1.0f, 1.0f );
 
             SamplerState state = new SamplerState( ApplicationDX11.Instance.Device, new SamplerStateDescription()
             {

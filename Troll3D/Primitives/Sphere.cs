@@ -124,23 +124,25 @@ namespace Troll3D{
             List<StandardVertex> vertices = new List<StandardVertex>();
             List<int> indices_ = new List<int>();
 
-            mesh.AddVertex( new StandardVertex(
-                new Vector3( 0.0f, -radius, 0.0f ),
-                new Vector3( 0.0f, -1.0f, 0.0f ),
-                new Vector2( 0.0f, 0.0f )
-            ) );
+             // Création des sommets
 
-            for ( int i = 1; i < ydiscretisation; ++i )
-            {
-                for ( int j = 0; j < xdiscretisation; ++j )
-                {
-                    float val = ( float )Math.PI * ( float )i / ( float )ydiscretisation;
-                    val = -( float )Math.Cos( val );
+            mesh.AddVertex(new StandardVertex(
+                new Vector3(0.0f, -radius, 0.0f),
+                new Vector3(0.0f, -1.0f, 0.0f),
+                new Vector2(0.0f, 0.0f)
+            ));
+
+            for (int i = 0; i < ydiscretisation; ++i) {
+
+                for (int j = 0; j < xdiscretisation; ++j) {
+
+                    float val = (float)Math.PI * (float)i / (float)ydiscretisation;
+                    val = -(float)Math.Cos(val);
 
                     Vector3 position = new Vector3(
-                        ( float )Math.Sin( Math.PI * i / ( float )ydiscretisation ) * ( float )Math.Cos( 2.0f * Math.PI * j / xdiscretisation ) * radius,
-                        val * radius,
-                        ( float )Math.Sin( Math.PI * i / ( float )ydiscretisation ) * ( float )Math.Sin( 2.0f * Math.PI * j / xdiscretisation ) * radius );
+                        (float)Math.Sin(Math.PI * i / (float)ydiscretisation) * (float)Math.Cos(2.0f * Math.PI * j / xdiscretisation)*radius,
+                        val*radius,
+                        (float)Math.Sin(Math.PI * i / (float)ydiscretisation) * (float)Math.Sin(2.0f * Math.PI * j / xdiscretisation)*radius);
 
                     Vector3 normal = position;
                     normal.Normalize();
@@ -148,32 +150,32 @@ namespace Troll3D{
                         new StandardVertex(
                             position,
                             normal,
-                            new Vector2( ( float )j / ( float )xdiscretisation, ( float )i / ( float )ydiscretisation )
-                    ) );
+                            new Vector2((float)j / (float)xdiscretisation, (float)i / (float)ydiscretisation)
+                    ));
                 }
             }
 
-            mesh.AddVertex( new StandardVertex(
-                new Vector3( 0.0f, radius, 0.0f ),
-                new Vector3( 0.0f, 1.0f, 0.0f ),
-                new Vector2( 0.0f, 1.0f )
-            ) );
+            mesh.AddVertex(new StandardVertex(
+                new Vector3(0.0f, radius, 0.0f),
+                new Vector3(0.0f, 1.0f, 0.0f),
+                new Vector2(0.0f, 1.0f)
+            ));
 
-            for ( int i = 0; i < xdiscretisation - 1; i++ )
-            {
-                indices_.Add( 0 );
-                indices_.Add( i + 1 );
-                indices_.Add( i + 2 );
+            // Création des faces
+            for (int i = 0; i < xdiscretisation-1; i++) {
+                indices_.Add(0);
+                indices_.Add(i + 1);
+                indices_.Add(i + 2);
             }
 
-            indices_.Add( 0 );
-            indices_.Add( xdiscretisation );
-            indices_.Add( 1 );
-
-            for ( int i = 0; i < ydiscretisation - 2; i++ )
-            {
-                for ( int j = 0; j < xdiscretisation - 1; j++ )
-                {
+            
+            indices_.Add(0);
+            indices_.Add(xdiscretisation);
+            indices_.Add(1);
+            
+            for (int i = 0; i < ydiscretisation-1; i++) {
+                for (int j = 0; j < xdiscretisation-1; j++) {
+                
 
                     mesh.AddFace(
                         1 + xdiscretisation * i + j,            // 1

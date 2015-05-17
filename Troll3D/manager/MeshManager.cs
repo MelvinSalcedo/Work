@@ -10,32 +10,101 @@ using System.Text.RegularExpressions;
 
 namespace Troll3D
 {
+    /// <summary>
+    /// Petite classe utilitaire pour enregistrer les indices des informations de sommets
+    /// qui ont été précédemment chargé
+    /// </summary>
+    public class FaceObj
+    {
+        public FaceObj() { }
+        public FaceObj( int[] vertices, int[] normals, int [] textures)
+        {
+            IndexesVertice.AddRange(vertices);
+            IndexesNormal.AddRange( normals);
+            IndexesTexture.AddRange( textures );
+        }
+
+        public void AddVertex( int vertice, int normal, int texture )
+        {
+            IndexesVertice.Add(vertice);
+            if ( normal != -1 )
+            {
+                IndexesNormal.Add( normal );
+            }
+            if ( texture != -1 )
+            {
+                IndexesTexture.Add( texture );
+            }
+        }
+
+        public List<int> IndexesVertice = new List<int>();
+        public List<int> IndexesNormal  = new List<int>();
+        public List<int> IndexesTexture = new List<int>();
+        /// <summary>
+        /// RealIndex renvoie vers l'index de sommet que l'on calcule plus tardivement
+        /// </summary>
+        public List<int> RealIndex      = new List<int>();
+    }
+
+    /// <summary>
+    /// J'utilise une classe pour enregistrer les indices qui forment un sommet unique
+    /// </summary>
+    public class MeshVertex
+    {
+        /// <summary>
+        /// Vérifie si le MeshVertex passé en paramètre existe déjà et renvoie son indice
+        /// </summary>
+        public static int Exist( List<MeshVertex> vertices, MeshVertex mv )
+        {
+            for ( int i = 0; i < vertices.Count; i++ )
+            {
+                if
+                ( 
+                    vertices[i].positionIndex== mv.positionIndex &&
+                    vertices[i].textureIndex== mv.textureIndex &&
+                    vertices[i].normalIndex== mv.normalIndex 
+                ){
+                    return i;
+                }
+            }
+            return -1;
+        }
+        public MeshVertex( int pos, int tex, int norm )
+        {
+            positionIndex = pos;
+            textureIndex = tex;
+            normalIndex = norm;
+        }
+        public int positionIndex;
+        public int textureIndex;
+        public int normalIndex;
+    }
+   
+
     public class MeshManager
     {
 
         public static MeshManager Instance;
 
-
-        public static Entity LoadObj( string file )
+        public static Mesh LoadObj( string file )
         {
-            string filename = "C:\\NewWorkbench\\DotNet\\Work\\Resources\\" + file;
-
-            Entity root = new Entity();
+            string filename = "D:\\Work\\Resources\\" + file;
 
             StreamReader stream = new StreamReader( filename );
-
-
 
             List<float> Vertices = new List<float>();
             List<float> Normals = new List<float>();
             List<float> Textures = new List<float>();
+            List<MeshVertex> meshVertices = new List<MeshVertex>();
 
-            List<int> Faces = new List<int>();
+            
 
-            bool isTriangle = true;
+            
+            List<FaceObj> ObjFaces = new List<FaceObj>();
 
-            bool faceLoading = false;
 
+            // On commence par lire l'intégrité du fichier. Dans le processus, on récupère les informations
+            // sur les sommets et les faces
             while ( !stream.EndOfStream )
             {
                 string line = stream.ReadLine();
@@ -59,6 +128,7 @@ namespace Troll3D
 
                         string[] splits = line.Split( ' ' );
 
+                        // Si la ligne débute par v, on ajoute un sommet
                         if ( splits[0] == "v" )
                         {
                             for ( int i = 1; i < splits.Count(); i++ )
@@ -66,7 +136,7 @@ namespace Troll3D
                                 Vertices.Add( float.Parse( splits[i].Replace( '.', ',' ) ) );
                             }
                         }
-
+                        // Si la ligne débute par vn, on ajoute une normale
                         if ( splits[0] == "vn" )
                         {
                             for ( int i = 1; i < splits.Count(); i++ )
@@ -75,6 +145,7 @@ namespace Troll3D
                             }
                         }
 
+                        // Si la ligne débute par vt, on ajoute une coordonnée de texture
                         if ( splits[0] == "vt" )
                         {
                             for ( int i = 1; i < splits.Count(); i++ )
@@ -83,69 +154,131 @@ namespace Troll3D
                             }
                         }
 
+                        // Si la ligne débute par f, on ajoute une face
                         if ( splits[0] == "f" )
                         {
-                            if ( splits.Count() > 4 )
-                            {
-                                isTriangle = false;
-                            }
+                            FaceObj fobj = new FaceObj();
+                            ObjFaces.Add(fobj);
+
                             for ( int i = 1; i < splits.Count(); i++ )
                             {
-
                                 string[] secondsplit = splits[i].Split( '/' );
+                                int[] vertex = new int[secondsplit.Length];
 
                                 for ( int j = 0; j < secondsplit.Count(); j++ )
                                 {
-                                    Faces.Add( int.Parse( secondsplit[j] ) );
+                                    // Position
+                                    if ( j == 0 )
+                                    {
+                                        int result;
+                                        if ( int.TryParse( secondsplit[j], out result ) )
+                                        {
+                                            fobj.IndexesVertice.Add( result );
+                                        }
+                                    }
+                                    // Textures
+                                    if ( j == 1 )
+                                    {
+                                        int result;
+                                        if ( int.TryParse( secondsplit[j], out result ) )
+                                        {
+                                            fobj.IndexesTexture.Add( result );
+                                        }
+                                        else
+                                        {
+                                            //fobj.IndexesNormal.Add( -1 );
+                                        }
+                                    } 
+                                    // Normals
+                                    if ( j == 2 )
+                                    {
+                                        int result;
+                                        if ( int.TryParse( secondsplit[j], out result ) )
+                                        {
+                                            fobj.IndexesNormal.Add( result );
+                                        }
+                                        else
+                                        {
+                                           // fobj.IndexesTexture.Add( -1 );
+                                        }
+                                    }
                                 }
+
                             }
                         }
                     }
                 }
+            }
 
-                
+            StandardMesh mesh = new StandardMesh();
+
+            for ( int i = 0; i < ObjFaces.Count; i ++ )
+            {
+                // On va construire les sommets à partir des indices
+                // Tout en essayant de ne pas dupliquer les sommets
+                for ( int j = 0; j < ObjFaces[i].IndexesVertice.Count; j++ )
+                {   
                     
+                    Vector3 normal  = new Vector3( 0.0f, 0.0f, 0.0F );
+                    Vector2 tex     = new Vector2( 0.0f, 0.0f );
 
+                    int vertexIndex  = ObjFaces[i].IndexesVertice[j]-1;
+                    int normalIndex  = -1;
+                    int textureIndex = -1;
 
-            }
+                    if ( ObjFaces[i].IndexesNormal.Count> 0)
+                    {
+                        normalIndex = ObjFaces[i].IndexesNormal[j]-1;
+                        normal = new Vector3( Normals[normalIndex*3], Normals[normalIndex*3+1], Normals[normalIndex*3+2]);
+                    }
 
-            faceLoading = false;
-
-            Mesh mesh = new Mesh();
-
-
-            for ( int i = 0; i < Faces.Count; i += 3 )
-            {
-                mesh.AddVertex(
-                    new StandardVertex(
-                    new Vector3( Vertices[( Faces[i] - 1 ) * 3], Vertices[( Faces[i] - 1 ) * 3 + 1], Vertices[( Faces[i] - 1 ) * 3 + 2] ),
-                    new Vector3( Normals[( Faces[i + 2] - 1 ) * 3], Normals[( Faces[i + 2] - 1 ) * 3 + 1], Normals[( Faces[i + 2] - 1 ) * 3 + 2] ),
-                    new Vector2( Textures[( Faces[i + 1] - 1 ) * 2], Textures[( Faces[i + 1] - 1 ) * 2 + 1] )
-
-                    ) );
-            }
-
-            int countplus = 3*3;
-            if ( isTriangle == false )
-            {
-                countplus = 4*3;
-            }
-            for ( int i = 0; i < Faces.Count; i += countplus )
-            {
-                mesh.AddFace( i/3, i/3 + 1, i/3 + 2 );
-                if ( !isTriangle )
-                {
-                    mesh.AddFace( i / 3 + 3, i / 3, i / 3 + 2 );
+                    if ( ObjFaces[i].IndexesTexture.Count>0 )
+                    {
+                        textureIndex = ObjFaces[i].IndexesTexture[j]-1;
+                        tex = new Vector2( Textures[textureIndex * 2], Textures[textureIndex*2 + 1] );
+                    }
+                    MeshVertex mv = new MeshVertex( vertexIndex, normalIndex, textureIndex );
+                    int index = MeshVertex.Exist( meshVertices, mv );
+                    // Si on a pas déjà eu cette combinaison d'indice, on ajoute un nouveau sommet
+                    if ( index ==-1)
+                    {
+                        meshVertices.Add( mv );
+                        mesh.AddVertex
+                        (
+                            new StandardVertex
+                            (
+                               new Vector3( Vertices[vertexIndex * 3], Vertices[vertexIndex * 3 + 1], Vertices[vertexIndex * 3 + 2] ),
+                               normal,
+                               tex
+                            )
+                        );
+                        ObjFaces[i].RealIndex.Add( meshVertices.Count - 1 );
+                    }
+                    else
+                    {
+                        ObjFaces[i].RealIndex.Add(index);
+                    }
+                    
                 }
             }
 
-            mesh.UpdateMesh();
+            // Pour le moment je ne gère que les obj contenant des triangles ou des carrés
+            for ( int i = 0; i < ObjFaces.Count ; i++)
+            {
+                mesh.AddFace( ObjFaces[i].RealIndex[0], ObjFaces[i].RealIndex[1] , ObjFaces[i].RealIndex[2] );
 
+                if ( ObjFaces[i].IndexesVertice.Count== 4 )
+                {
+                    mesh.AddFace( ObjFaces[i].RealIndex[0], ObjFaces[i].RealIndex[2], ObjFaces[i].RealIndex[3] );
+                }
+            }
 
-            Components.MeshRenderer mr = ( Components.MeshRenderer )root.AddComponent( new Components.MeshRenderer( new MaterialDX11(), mesh ) );
-
-
-            return root;
+            if ( Normals.Count == 0 )
+            {
+                mesh.ComputeNormals();
+            }
+            
+            return mesh.ReturnMesh();
         }
 
 
