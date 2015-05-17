@@ -7,6 +7,12 @@ namespace Troll3D.Components.Lighting
 {
     public class DirectionalLight : Light
     {
+        public override void Attach( Entity entity )
+        {
+            base.Attach( entity );
+            Entity = entity;
+        }
+
         public DirectionalLight()
         {
             SetIntensity( 0.1f );
@@ -20,10 +26,15 @@ namespace Troll3D.Components.Lighting
 
         public void AddProjection( Projection projection )
         {
-            //modelrenderer_ = new MeshRenderer(new MaterialDX11(), ProjectionMesh.GetModel(projection));
-            //modelrenderer_.SetFillMode(SharpDX.Direct3D11.FillMode.Wireframe);
-            // SetProjection( projection );
-            // m_View = new View( transform_, projection );
+        //    Entity son = new Entity( Entity );
+        //    MeshRenderer mr = son.AddComponent<MeshRenderer>();
+        //    mr.material_ = new MaterialDX11();
+        //    mr.model_ = ProjectionMesh.GetModel( projection );
+        //    mr.SetFillMode( SharpDX.Direct3D11.FillMode.Wireframe );
+            SetProjection( projection );
+            m_View = new View( Entity.transform_, projection );
         }
+
+        public Entity Entity;
     }
 }

@@ -33,11 +33,6 @@ namespace ShadowMapping
 
         public override void OnKeyDown( KeyboardEvent e )
         {
-            if ( e.keycode_ == KeyCode.Key_5 )
-            {
-                LightManager.Instance.SwitchPCF();
-                Console.WriteLine( " PCF is " + LightManager.Instance.IsPCFActivated() );
-            }
             if ( e.keycode_ == KeyCode.Key_3 )
             {
                 LightManager.Instance.SetAcneBias( LightManager.Instance.GetAcneBias() + TimeHelper.Instance.GetElapsedTime() * 0.0001f );
@@ -51,14 +46,21 @@ namespace ShadowMapping
             }
 
 
+            if ( e.keycode_ == KeyCode.Key_5 )
+            {
+                LightManager.Instance.SwitchPCF();
+                Console.WriteLine( " PCF is " + LightManager.Instance.IsPCFActivated() );
+            }
+
+
             if ( e.keycode_ == KeyCode.Key_1 )
             {
-                Entity.transform_.RotateEuler( 0.0f, 0.005f * ( float )TimeHelper.Instance.GetElapsedTime(), 0.0f );
+                Entity.transform_.RotateEuler( 0.0f, 0.001f * ( float )TimeHelper.Instance.GetElapsedTime(), 0.0f );
             }
 
             if ( e.keycode_ == KeyCode.Key_2 )
             {
-                Entity.transform_.RotateEuler( 0.0f, -0.005f * ( float )TimeHelper.Instance.GetElapsedTime(), 0.0f );
+                Entity.transform_.RotateEuler( 0.0f, -0.001f * ( float )TimeHelper.Instance.GetElapsedTime(), 0.0f );
             }
 
             if ( e.keycode_ == KeyCode.Key_Z )

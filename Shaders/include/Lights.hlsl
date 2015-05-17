@@ -193,7 +193,6 @@ float3 ComputeLight(float3 pixelPosition, float3 normal, float3 cameraPosition)
 
 	for (int i = 0; i < lightCount; i++)
 	{
-
 		if (lights[i].Type == 0)
 		{
 			color += PointLight(lights[i], eye, normal, pixelPosition);

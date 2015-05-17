@@ -9,30 +9,23 @@ namespace ShadowMapping
 {
     public class ProjectorBehavior : Behaviour
     {
-        public ProjectorBehavior()
-        {
-
-        }
-
-
-        public Entity entilol;
+        public ProjectorBehavior(){}
 
         public override void Initialize()
         {
-            projector = ( Projector )( entity );
+            projector = (Projector) Entity.GetComponent( ComponentType.Projector );
 
-            entilol = entity.Append( new Entity() );
+            son = Entity.Append( new Entity() );
 
             // Une "vue" pointe en z négatif alors on ajoute le modèle de projection qu'on retourne comme une crêpe
-            entilol.modelrenderer_ = new MeshRenderer( new MaterialDX11(), ProjectionMesh.GetModel( projector.m_View.projection_ ) );
-            entilol.modelrenderer_.material_.AddConstantBuffer<Vector4>( new Vector4( 1.0f, 1.0f, 1.0f, 1.0f ) );
-            entilol.modelrenderer_.SetFillMode( SharpDX.Direct3D11.FillMode.Wireframe );
-            //entilol.transform_.SetRotationEuler(0.0f, 3.141592f, 0.0f);
+            sonmr = son.AddComponent<MeshRenderer>();
+            sonmr.material_.SetMainColor( 1.0f, 0.0f, 0.0f, 1.0f );
+            sonmr.model_ = ProjectionMesh.GetModel( projector.Projection );
+            sonmr.SetFillMode( SharpDX.Direct3D11.FillMode.Wireframe );
         }
 
         public override void OnKeyDown( KeyboardEvent e )
         {
-
             float rotatecoef = 0.03f;
             float translatecoef = 0.2f;
 
@@ -40,22 +33,28 @@ namespace ShadowMapping
 
             if ( e.keycode_ == KeyCode.Key_1 )
             {
-                projector.SetFrustum( projector.GetFrustum().GetFieldOfView() + 0.01f,
+                projector.SetFrustum
+                ( 
+                    projector.GetFrustum().GetFieldOfView() + 0.01f,
                     projector.GetFrustum().GetRatio(),
                     projector.GetFrustum().GetNearPlane(),
-                    projector.GetFrustum().GetFarPlane() );
+                    projector.GetFrustum().GetFarPlane() 
+                );
 
-                entilol.modelrenderer_.model_ = ProjectionMesh.GetModel( projector.m_View.projection_ );
+                sonmr.model_ = ProjectionMesh.GetModel( projector.m_View.projection_ );
             }
 
             if ( e.keycode_ == KeyCode.Key_2 )
             {
-                projector.SetFrustum( projector.GetFrustum().GetFieldOfView() - 0.01f,
+                projector.SetFrustum
+                ( 
+                    projector.GetFrustum().GetFieldOfView() - 0.01f,
                     projector.GetFrustum().GetRatio(),
                     projector.GetFrustum().GetNearPlane(),
-                    projector.GetFrustum().GetFarPlane() );
+                    projector.GetFrustum().GetFarPlane() 
+                );
 
-                entilol.modelrenderer_.model_ = ProjectionMesh.GetModel( projector.m_View.projection_ );
+                sonmr.model_ = ProjectionMesh.GetModel( projector.m_View.projection_ );
             }
 
             // Rotations
@@ -89,7 +88,6 @@ namespace ShadowMapping
                 transform.RotateEuler( 0.0f, 0.0f, rotatecoef );
             }
 
-
             // Translations
             if ( e.keycode_ == KeyCode.Key_Z )
             {
@@ -122,7 +120,8 @@ namespace ShadowMapping
             }
         }
 
-
+        Entity son;
+        MeshRenderer sonmr;
         Projector projector;
     }
 }

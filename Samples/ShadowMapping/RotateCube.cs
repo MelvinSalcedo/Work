@@ -11,15 +11,14 @@ namespace ShadowMapping
 
         public RotateCube() { }
 
-
         public override void Initialize()
         {
-            coef = 0.0007f;
+            coef = 0.0057f;
         }
 
         public override void Update()
         {
-            transform.RotateEuler( TimeHelper.Instance.GetElapsedTime() * coef, 0.0f, 0.0f );
+            Entity.transform_.RotateEuler( coef, 0.0f, 0.0f );
         }
 
         float coef;

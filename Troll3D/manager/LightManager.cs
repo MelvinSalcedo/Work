@@ -19,7 +19,7 @@ namespace Troll3D
             Instance = this;
             m_Data = new LightsDesc();
             m_Data.Lights = new LightDesc[m_MaxLights];
-            SetAcneBias( 0.05f );
+            SetAcneBias( 0.005f );
             m_Data.ActivatePCF = false;
             // Pour les lumières, je réserve le buffer d'index 1
             m_ConstantBuffer = new CBuffer<LightsDesc>( 1, m_Data );

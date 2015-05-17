@@ -34,5 +34,7 @@
     <FxCompile Include="src\Fragment\pProjector.hlsl" />
     <FxCompile Include="src\Fragment\pShowAlphaValue.hlsl" />
     <FxCompile Include="src\Fragment\pLSystem.hlsl" />
+    <FxCompile Include="src\Fragment\pShadowMapping.hlsl" />
+    <FxCompile Include="src\Fragment\pOneChannel.hlsl" />
   </ItemGroup>
 </Project>

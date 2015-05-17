@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using D3D11 = SharpDX.Direct3D11;
 
 using Troll3D.Components;
+using Troll3D.Components.Lighting;
 using Troll3D.Rendering;
 
 namespace Troll3D
@@ -159,7 +160,7 @@ namespace Troll3D
         public void DrawFromCamera( Camera camera, RenderTarget renderTarget )
         {
             //GlowingPass( camera );
-            //ShadowMappingPass( camera );
+            ShadowMappingPass( camera );
 
             camera.SetCurrentView();
 
@@ -317,34 +318,37 @@ namespace Troll3D
             // EndGlowinPass
         }
 
-
         private void ShadowMappingPass( Camera camera )
         {
             // Shadow Pass
 
-            ///DesactivatePixelShader = true;
-            //for (int i = 0; i < LightManager.Instance.Count(); i++){
+            DesactivatePixelShader = true;
 
-            //    Light light = LightManager.Instance.GetLight(i);
-            //    if (light.IsActive)
-            //    {
-            //        if (light.IsCastingShadow()){
+            for ( int i = 0; i < LightManager.Instance.Count(); i++ )
+            {
+                Light light = LightManager.Instance.GetLight( i );
 
-            //            light.SetCurrentView();
-            //            //camera.SetCurrentView();
-            //            SetViewport(new Viewport(0, 0, light.shadowmap_.width_, light.shadowmap_.height_));
+                if ( light.IsActive )
+                {
+                    if ( light.IsCastingShadow() )
+                    {
+                        DeviceContext.OutputMerger.BlendState = mainBlend;
 
-            //            devicecontext_.OutputMerger.SetTargets(light.shadowmap_.depthstencilview, (RenderTargetView)(null) );
-            //            light.shadowmap_.Clear();
+                        light.SetCurrentView();
+                        LightManager.Instance.Update( View.Current );
 
-            //            scene_.Draw();
-            //        }
-            //    }
-            //}
+                        //camera.SetCurrentView();
+                        SetViewport( new Viewport( 0, 0, light.shadowmap_.width_, light.shadowmap_.height_ ) );
 
-            // End Shadow Pass
+                        DeviceContext.OutputMerger.SetTargets( light.shadowmap_.depthstencilview, ( RenderTargetView )( null ) );
+                        light.shadowmap_.Clear();
+                        scene_.Render();
+                    }
+                }
+            }
 
             DesactivatePixelShader = false;
+            // End Shadow Pass
         }
 
         /// <summary>
